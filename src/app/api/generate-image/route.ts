@@ -22,9 +22,16 @@ export async function POST(req: Request) {
     // Em vez disso, retornamos uma imagem de placeholder para permitir o teste da UI.
     // const result = await generateImageWithAI(options);
 
+    const aspectRatioMap: Record<string, { width: number, height: number }> = {
+        landscape: { width: 1024, height: 576 },
+        portrait: { width: 576, height: 1024 },
+        square: { width: 1024, height: 1024 }
+    };
+    const { width, height } = aspectRatioMap[options.aspectRatio] || aspectRatioMap.landscape;
+
     const simulatedResult = {
       // Usamos o prompt para gerar uma imagem diferente a cada vez na simulação
-      imageUrl: `https://picsum.photos/seed/${options.prompt.length}/${options.aspectRatio === 'landscape' ? 1024 : 768}/${options.aspectRatio === 'portrait' ? 1024 : 768}`
+      imageUrl: `https://picsum.photos/seed/${encodeURIComponent(options.prompt)}/${width}/${height}`
     };
     // --- FIM DA SIMULAÇÃO ---
 
