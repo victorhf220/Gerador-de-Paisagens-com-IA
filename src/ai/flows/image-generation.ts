@@ -2,7 +2,7 @@
 'use server';
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { GenerationOptions, ArtStyle, AspectRatio } from '@/lib/types';
+import { GenerationOptions } from '@/lib/types';
 
 const ImageGenerationInputSchema = z.object({
   prompt: z.string(),
@@ -27,10 +27,11 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
   const fullPrompt = `A ${style.toLowerCase()} image of: ${prompt}. ${stylePrompt}.`;
 
   const { media } = await ai.generate({
-    model: 'googleai/imagen-2.0-fast-generate',
+    model: 'googleai/gemini-2.5-flash-image-preview',
     prompt: fullPrompt,
     config: {
-      safetySettings: [
+       responseModalities: ['IMAGE'],
+       safetySettings: [
         {
           category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
           threshold: 'BLOCK_NONE',
