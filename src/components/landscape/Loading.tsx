@@ -42,19 +42,19 @@ export const Loading: React.FC<LoadingProps> = ({ progress }) => {
             {progress.message}
           </h3>
           <p className="text-sm text-muted-foreground">
-            Stage: {progress.stage.charAt(0).toUpperCase() + progress.stage.slice(1)}
+            Estágio: {progress.stage.charAt(0).toUpperCase() + progress.stage.slice(1)}
           </p>
         </div>
         
         <div className="space-y-3">
           <Progress value={progress.progress} className="h-2" />
           <p className="text-sm text-muted-foreground">
-            {progress.progress}% complete
+            {progress.progress}% completo
           </p>
         </div>
 
         <div className="text-xs text-muted-foreground/80 pt-2">
-          Creating your unique landscape image...
+          Criando sua paisagem única...
         </div>
       </CardContent>
     </Card>

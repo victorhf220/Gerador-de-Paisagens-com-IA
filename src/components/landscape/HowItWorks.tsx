@@ -12,11 +12,11 @@ export const HowItWorks: React.FC = () => {
     >
       <div className="text-center space-y-4">
         <h2 className="text-3xl font-headline font-bold text-foreground">
-          How It Works
+          Como Funciona
         </h2>
         <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-          Creating stunning AI landscapes is simple with our four-step process
-        </p>
+          Criar paisagens incríveis com IA é simples com nosso processo de quatro etapas
+        </p>      
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -34,7 +34,7 @@ export const HowItWorks: React.FC = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2">
                 <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-full">
-                  Step {step.id}
+                  Passo {step.id}
                 </span>
               </div>
               

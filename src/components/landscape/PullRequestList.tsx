@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface PullRequest {
   id: number;
@@ -36,12 +37,12 @@ export function PullRequestList() {
           `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/pulls?state=all&per_page=10`
         );
         if (!response.ok) {
-          throw new Error('Failed to fetch pull requests from GitHub API.');
+          throw new Error('Falha ao buscar os pull requests da API do GitHub.');
         }
         const data: PullRequest[] = await response.json();
         setPullRequests(data);
       } catch (err: any) {
-        setError(err.message || 'An unknown error occurred.');
+        setError(err.message || 'Ocorreu um erro desconhecido.');
       } finally {
         setLoading(false);
       }
@@ -71,7 +72,7 @@ export function PullRequestList() {
       return (
         <div className="flex flex-col items-center justify-center text-center text-red-500 min-h-[300px]">
           <AlertCircle className="w-12 h-12 mb-4" />
-          <h3 className="text-xl font-semibold">Failed to load data</h3>
+          <h3 className="text-xl font-semibold">Falha ao carregar dados</h3>
           <p className="text-sm">{error}</p>
         </div>
       );
@@ -81,8 +82,8 @@ export function PullRequestList() {
       return (
         <div className="flex flex-col items-center justify-center text-center text-muted-foreground min-h-[300px]">
           <GitPullRequest className="w-12 h-12 mb-4" />
-          <h3 className="text-xl font-semibold">No Pull Requests Found</h3>
-          <p>There are no pull requests to display for this repository.</p>
+          <h3 className="text-xl font-semibold">Nenhum Pull Request Encontrado</h3>
+          <p>Não há pull requests para exibir para este repositório.</p>
         </div>
       );
     }
@@ -114,12 +115,12 @@ export function PullRequestList() {
                   <div className="flex-1 space-y-1">
                     <p className="font-semibold text-foreground line-clamp-1">{pr.title}</p>
                     <p className="text-sm text-muted-foreground">
-                      by {pr.user.login} •{' '}
-                      {formatDistanceToNow(new Date(pr.created_at), { addSuffix: true })}
+                      por {pr.user.login} •{' '}
+                      {formatDistanceToNow(new Date(pr.created_at), { addSuffix: true, locale: ptBR })}
                     </p>
                   </div>
-                  <Badge variant={pr.state === 'open' ? 'default' : 'secondary'} className={pr.state === 'open' ? 'bg-green-600' : 'bg-purple-600'}>
-                    {pr.state}
+                  <Badge variant={pr.state === 'open' ? 'default' : 'secondary'} className={pr.state === 'open' ? 'bg-green-600 capitalize' : 'bg-purple-600 capitalize'}>
+                    {pr.state === 'open' ? 'Aberto' : 'Fechado'}
                   </Badge>
                 </CardContent>
               </Card>
@@ -137,10 +138,10 @@ export function PullRequestList() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <GitPullRequest />
-              GitHub Pull Requests
+              Pull Requests do GitHub
             </CardTitle>
             <CardDescription>
-              Showing latest pull requests from{' '}
+              Exibindo os últimos pull requests de{' '}
               <a
                 href={`https://github.com/${REPO_OWNER}/${REPO_NAME}`}
                 target="_blank"

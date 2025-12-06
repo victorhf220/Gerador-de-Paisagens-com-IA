@@ -21,13 +21,13 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
       const diffInMinutes = Math.floor((now.getTime() - then.getTime()) / (1000 * 60));
       
       if (diffInMinutes < 1) {
-        return 'just now';
+        return 'agora mesmo';
       } if (diffInMinutes < 60) {
-        return `${diffInMinutes}m ago`;
+        return `há ${diffInMinutes}m`;
       } else if (diffInMinutes < 1440) {
-        return `${Math.floor(diffInMinutes / 60)}h ago`;
+        return `há ${Math.floor(diffInMinutes / 60)}h`;
       } else {
-        return `${Math.floor(diffInMinutes / 1440)}d ago`;
+        return `há ${Math.floor(diffInMinutes / 1440)}d`;
       }
     };
 
@@ -88,7 +88,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
                 </span>
                 <span className="flex items-center gap-1">
                   <Cpu size={12} />
-                   Standard
+                   Padrão
                 </span>
               </div>
               <span>{timeAgo}</span>

@@ -14,7 +14,7 @@ export function AppHeader() {
         >
           <MountainSnow className="h-6 w-6 text-primary" />
           <h1 className="font-headline text-xl font-bold tracking-tight text-foreground">
-            AI Landscape Generator
+            Gerador de Paisagens com IA
           </h1>
         </motion.div>
       </div>

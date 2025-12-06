@@ -6,6 +6,7 @@ import { GeneratedImage } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface LightboxProps {
   image: GeneratedImage | null;
@@ -75,14 +76,14 @@ export const Lightbox: React.FC<LightboxProps> = ({
                     onClick={handleDownload}
                     variant="secondary"
                     size="icon"
-                    aria-label="Download image"
+                    aria-label="Baixar imagem"
                   >
                     <Download size={20} />
                   </Button>
                   <Button
                     variant="secondary"
                     size="icon"
-                    aria-label="Fullscreen"
+                    aria-label="Tela cheia"
                     onClick={() => window.open(image.url, '_blank')}
                   >
                     <Maximize2 size={20} />
@@ -94,12 +95,13 @@ export const Lightbox: React.FC<LightboxProps> = ({
             <div className="w-full lg:w-96 h-1/2 lg:h-full p-6 flex flex-col overflow-y-auto">
               <div className='flex-grow space-y-6'>
                 <div className="flex items-start justify-between">
-                    <h2 className="text-2xl font-headline font-bold">Details</h2>
+                    <h2 className="text-2xl font-headline font-bold">Detalhes</h2>
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={onClose}
                         className="-mr-2 -mt-2"
+                        aria-label="Fechar"
                     >
                         <X className="w-6 h-6" />
                     </Button>
@@ -107,30 +109,30 @@ export const Lightbox: React.FC<LightboxProps> = ({
                 
                 <div className="space-y-6 text-sm">
                   <div className='space-y-1'>
-                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Sparkles className='w-4 h-4 text-primary' /> Prompt</h3>
+                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Sparkles className='w-4 h-4 text-primary' /> Ideia (Prompt)</h3>
                       <p className='pl-6'>{image.prompt}</p>
                   </div>
                   <div className='space-y-1'>
-                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Cpu className='w-4 h-4 text-primary' /> AI Model</h3>
-                      <Badge variant="secondary" className='ml-6 capitalize'>Standard</Badge>
+                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Cpu className='w-4 h-4 text-primary' /> Modelo IA</h3>
+                      <Badge variant="secondary" className='ml-6 capitalize'>Padrão</Badge>
                   </div>
                   <div className='space-y-1'>
-                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Tag className='w-4 h-4 text-primary' /> Style</h3>
+                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Tag className='w-4 h-4 text-primary' /> Estilo</h3>
                       <Badge variant="secondary" className='ml-6 capitalize'>{image.style}</Badge>
                   </div>
                   <div className='space-y-1'>
-                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Ratio className='w-4 h-4 text-primary' /> Aspect Ratio</h3>
+                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Ratio className='w-4 h-4 text-primary' /> Proporção</h3>
                       <Badge variant="secondary" className='ml-6'>
                         {image.aspectRatio === 'landscape' ? '16:9' : image.aspectRatio === 'portrait' ? '9:16' : '1:1'}
                       </Badge>
                   </div>
                   <div className='space-y-1'>
-                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Calendar className='w-4 h-4 text-primary' /> Created</h3>
-                      <p className='pl-6'>{format(new Date(image.createdAt), "MMMM d, yyyy 'at' h:mm a")}</p>
+                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Calendar className='w-4 h-4 text-primary' /> Criado em</h3>
+                      <p className='pl-6'>{format(new Date(image.createdAt), "d 'de' MMMM, yyyy 'às' HH:mm", { locale: ptBR })}</p>
                   </div>
                   <div className='space-y-1'>
-                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Timer className='w-4 h-4 text-primary' /> Generation Time</h3>
-                      <p className='pl-6'>{image.generationTime.toFixed(2)} seconds</p>
+                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Timer className='w-4 h-4 text-primary' /> Tempo de Geração</h3>
+                      <p className='pl-6'>{image.generationTime.toFixed(2)} segundos</p>
                   </div>
                 </div>
               </div>
@@ -138,7 +140,7 @@ export const Lightbox: React.FC<LightboxProps> = ({
               <div className="pt-6 border-t border-border">
                 <Button onClick={handleDownload} className='w-full'>
                   <Download className="mr-2" />
-                  Download Image
+                  Baixar Imagem
                 </Button>
               </div>
             </div>

@@ -5,39 +5,39 @@ import type { QuickPrompt, FAQ, HowItWorksStep, GeneratedImage } from '@/lib/typ
 export const quickPrompts: QuickPrompt[] = [
   {
     id: '1',
-    text: 'A serene mountain lake at sunset with reflections',
-    category: 'Nature',
-    tags: ['mountain', 'lake', 'sunset']
+    text: 'Um sereno lago na montanha ao pôr do sol com reflexos',
+    category: 'Natureza',
+    tags: ['montanha', 'lago', 'pôr do sol']
   },
   {
     id: '2', 
-    text: 'Mystical forest with glowing mushrooms and ethereal light',
-    category: 'Fantasy',
-    tags: ['forest', 'mystical', 'glowing']
+    text: 'Floresta mística com cogumelos brilhantes e luz etérea',
+    category: 'Fantasia',
+    tags: ['floresta', 'místico', 'brilhante']
   },
   {
     id: '3',
-    text: 'Modern city skyline at night with neon lights',
-    category: 'Urban',
-    tags: ['city', 'night', 'neon']
+    text: 'Horizonte de cidade moderna à noite com luzes de neon',
+    category: 'Urbano',
+    tags: ['cidade', 'noite', 'neon']
   },
   {
     id: '4',
-    text: 'Vintage desert scene with old western town',
+    text: 'Cena de deserto vintage com cidade do velho oeste',
     category: 'Vintage',
-    tags: ['desert', 'western', 'vintage']
+    tags: ['deserto', 'velho oeste', 'vintage']
   },
   {
     id: '5',
-    text: 'Snow-covered forest with morning fog',
-    category: 'Nature',
-    tags: ['snow', 'forest', 'fog']
+    text: 'Floresta coberta de neve com névoa matinal',
+    category: 'Natureza',
+    tags: ['neve', 'floresta', 'névoa']
   },
   {
     id: '6',
-    text: 'Abstract flowing patterns in bright colors',
-    category: 'Abstract',
-    tags: ['abstract', 'flowing', 'colorful']
+    text: 'Padrões fluidos abstratos em cores vivas',
+    category: 'Abstrato',
+    tags: ['abstrato', 'fluido', 'colorido']
   }
 ];
 
@@ -45,33 +45,33 @@ export const quickPrompts: QuickPrompt[] = [
 export const faqData: FAQ[] = [
   {
     id: '1',
-    question: 'How does the AI landscape generator work?',
-    answer: 'Our AI uses advanced machine learning models trained on millions of landscape images to understand and generate new landscapes based on your text descriptions. The AI interprets your prompt and creates unique, high-quality landscape images.'
+    question: 'Como funciona o gerador de paisagens com IA?',
+    answer: 'Nossa IA usa modelos avançados de aprendizado de máquina treinados em milhões de imagens para entender e gerar novas paisagens com base em suas descrições de texto. A IA interpreta seu prompt e cria imagens de paisagem únicas e de alta qualidade.'
   },
   {
     id: '2',
-    question: 'What image formats are supported?',
-    answer: 'We generate images in high-quality PNG and JPEG formats. All images are optimized for web use and can be easily downloaded and shared.'
+    question: 'Quais formatos de imagem são suportados?',
+    answer: 'Geramos imagens nos formatos PNG e JPEG de alta qualidade. Todas as imagens são otimizadas para uso na web e podem ser facilmente baixadas e compartilhadas.'
   },
   {
     id: '3',
-    question: 'How long does it take to generate an image?',
-    answer: 'Image generation typically takes 10-30 seconds depending on the complexity of your prompt and the selected style. You\'ll see real-time progress updates during the generation process.'
+    question: 'Quanto tempo leva para gerar uma imagem?',
+    answer: 'A geração de imagens geralmente leva de 10 a 30 segundos, dependendo da complexidade do seu prompt e do estilo selecionado. Você verá atualizações de progresso em tempo real durante o processo de geração.'
   },
   {
     id: '4',
-    question: 'Can I use the generated images commercially?',
-    answer: 'Yes, all images generated through our platform can be used for personal and commercial purposes. We don\'t claim copyright on AI-generated content.'
+    question: 'Posso usar as imagens geradas comercialmente?',
+    answer: 'Sim, todas as imagens geradas através da nossa plataforma podem ser usadas para fins pessoais e comerciais. Não reivindicamos direitos autorais sobre o conteúdo gerado por IA.'
   },
   {
     id: '5',
-    question: 'What if I\'m not satisfied with the result?',
-    answer: 'You can always regenerate images with modified prompts or try different styles and aspect ratios. The AI learns from your preferences to provide better results over time.'
+    question: 'E se eu não estiver satisfeito com o resultado?',
+    answer: 'Você sempre pode gerar novas imagens com prompts modificados ou tentar diferentes estilos e proporções. A IA aprende com suas preferências para fornecer melhores resultados ao longo do tempo.'
   },
   {
     id: '6',
-    question: 'Are there any content restrictions?',
-    answer: 'We maintain community guidelines that prohibit generating inappropriate, harmful, or copyrighted content. Our AI is trained to respect these guidelines while maximizing creative freedom.'
+    question: 'Existem restrições de conteúdo?',
+    answer: 'Mantemos diretrizes da comunidade que proíbem a geração de conteúdo impróprio, prejudicial ou protegido por direitos autorais. Nossa IA é treinada para respeitar essas diretrizes, maximizando a liberdade criativa.'
   }
 ];
 
@@ -79,26 +79,26 @@ export const faqData: FAQ[] = [
 export const howItWorksSteps: HowItWorksStep[] = [
   {
     id: 1,
-    title: 'Describe Your Vision',
-    description: 'Write a detailed description of the landscape you want to create. Be specific about colors, mood, and elements.',
+    title: 'Descreva Sua Visão',
+    description: 'Escreva uma descrição detalhada da paisagem que você deseja criar. Seja específico sobre cores, humor e elementos.',
     icon: '✍️'
   },
   {
     id: 2,
-    title: 'Choose Style & Format',
-    description: 'Select from artistic styles like photorealistic, artistic, fantasy, or vintage. Pick your preferred aspect ratio.',
+    title: 'Escolha Estilo e Formato',
+    description: 'Selecione estilos como fotorrealista, artístico, fantasia ou vintage. Escolha sua proporção preferida.',
     icon: '🎨'
   },
   {
     id: 3,
-    title: 'AI Generation',
-    description: 'Our advanced AI processes your request and generates a unique landscape image based on your specifications.',
+    title: 'Geração por IA',
+    description: 'Nossa IA avançada processa sua solicitação e gera uma imagem de paisagem única com base em suas especificações.',
     icon: '🤖'
   },
   {
     id: 4,
-    title: 'Download & Share',
-    description: 'View your generated landscape in high quality, download it, or share it directly from the platform.',
+    title: 'Baixe e Compartilhe',
+    description: 'Visualize sua paisagem gerada em alta qualidade, baixe-a ou compartilhe-a diretamente da plataforma.',
     icon: '📱'
   }
 ];

@@ -20,10 +20,10 @@ export function ImageGallery({ images, onImageClick }: ImageGalleryProps) {
         <div className="text-center text-muted-foreground p-8">
           <ImageUp className="mx-auto h-16 w-16 text-primary/30" />
           <h2 className="mt-6 text-xl font-headline font-semibold text-foreground">
-            Your Generated Landscapes Appear Here
+            Suas Paisagens Geradas Aparecem Aqui
           </h2>
           <p className="mt-2 max-w-sm mx-auto">
-            Use the control panel on the left to describe a scene and generate your first image.
+            Use o painel de controle à esquerda para descrever uma cena e gerar sua primeira imagem.
           </p>
         </div>
       </Card>
@@ -43,9 +43,9 @@ export function ImageGallery({ images, onImageClick }: ImageGalleryProps) {
   return (
     <>
       <div className="flex justify-between items-baseline mb-4">
-        <h2 className="text-2xl font-headline font-bold text-foreground">Gallery</h2>
+        <h2 className="text-2xl font-headline font-bold text-foreground">Galeria</h2>
         <span className="text-sm text-muted-foreground font-medium">
-          {images.length} image{images.length === 1 ? '' : 's'}
+          {images.length} imagem{images.length === 1 ? '' : 's'}
         </span>
       </div>
       <motion.div

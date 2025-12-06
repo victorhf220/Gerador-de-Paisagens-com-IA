@@ -15,8 +15,8 @@ const sourceCodePro = Source_Code_Pro({
 });
 
 export const metadata: Metadata = {
-  title: "Content Curator AI",
-  description: "Summarize content and extract keywords with AI.",
+  title: "Gerador de Paisagens com IA",
+  description: "Crie paisagens incríveis com o poder da Inteligência Artificial.",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${sourceCodePro.variable}`}>
+    <html lang="pt-BR" className={`${inter.variable} ${sourceCodePro.variable}`}>
       <body
         className={cn(
           "min-h-screen bg-background font-body antialiased",

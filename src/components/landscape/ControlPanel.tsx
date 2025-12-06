@@ -53,16 +53,16 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   };
 
   const artStyles: { value: ArtStyle; label: string; description: string }[] = [
-    { value: 'photorealistic', label: 'Photorealistic', description: 'Real-world photography style' },
-    { value: 'artistic', label: 'Artistic', description: 'Creative and stylized' },
-    { value: 'fantasy', label: 'Fantasy', description: 'Imaginative and magical' },
-    { value: 'vintage', label: 'Vintage', description: 'Retro and nostalgic' }
+    { value: 'photorealistic', label: 'Fotorrealista', description: 'Estilo de fotografia do mundo real' },
+    { value: 'artistic', label: 'Artístico', description: 'Criativo e estilizado' },
+    { value: 'fantasy', label: 'Fantasia', description: 'Imaginativo e mágico' },
+    { value: 'vintage', label: 'Vintage', description: 'Retrô e nostálgico' }
   ];
 
   const aspectRatios: { value: AspectRatio; label: string; description: string }[] = [
-    { value: 'landscape', label: 'Landscape', description: '16:9 widescreen' },
-    { value: 'square', label: 'Square', description: '1:1 balanced' },
-    { value: 'portrait', label: 'Portrait', description: '9:16 vertical' }
+    { value: 'landscape', label: 'Paisagem', description: '16:9 widescreen' },
+    { value: 'square', label: 'Quadrado', description: '1:1 balanceado' },
+    { value: 'portrait', label: 'Retrato', description: '9:16 vertical' }
   ];
 
   return (
@@ -71,24 +71,24 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 font-headline">
             <WandSparkles className="text-primary" />
-            Create Your Landscape
+            Crie Sua Paisagem
           </CardTitle>
-          <CardDescription>Describe the scene you want to generate.</CardDescription>
+          <CardDescription>Descreva a cena que você quer gerar.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="prompt">Prompt</Label>
+            <Label htmlFor="prompt">Sua Ideia</Label>
             <Textarea
               id="prompt"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="e.g., A tranquil beach at sunrise with soft waves..."
+              placeholder="Ex: Uma praia tranquila ao amanhecer com ondas suaves..."
               className="min-h-[100px] text-base"
               disabled={isLoading}
             />
           </div>
           <div className="space-y-2">
-            <Label>Inspire Me</Label>
+            <Label>Inspire-me</Label>
             <div className="flex flex-wrap gap-2">
               {quickPrompts.slice(0, 4).map((quickPrompt) => (
                 <Button
@@ -108,10 +108,10 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="style">Art Style</Label>
+                <Label htmlFor="style">Estilo de Arte</Label>
                 <Select value={style} onValueChange={(v) => setStyle(v as ArtStyle)} disabled={isLoading}>
                   <SelectTrigger id="style">
-                    <SelectValue placeholder="Select style" />
+                    <SelectValue placeholder="Selecione um estilo" />
                   </SelectTrigger>
                   <SelectContent>
                     {artStyles.map((s) => (
@@ -123,14 +123,14 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="aspect-ratio">Aspect Ratio</Label>
+                <Label htmlFor="aspect-ratio">Proporção</Label>
                 <Select
                   value={aspectRatio}
                   onValueChange={(v) => setAspectRatio(v as AspectRatio)}
                   disabled={isLoading}
                 >
                   <SelectTrigger id="aspect-ratio">
-                    <SelectValue placeholder="Select ratio" />
+                    <SelectValue placeholder="Selecione uma proporção" />
                   </SelectTrigger>
                   <SelectContent>
                     {aspectRatios.map((r) => (
@@ -152,7 +152,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             disabled={!prompt.trim() || isLoading}
           >
             {isLoading ? <LoadingSpinner size="sm" /> : <Sparkles />}
-            {isLoading ? 'Generating...' : 'Generate'}
+            {isLoading ? 'Gerando...' : 'Gerar'}
           </Button>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -163,11 +163,11 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                 disabled={isLoading}
               >
                 <RotateCcw className="mr-2" />
-                Reset Gallery
+                Limpar Galeria
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Clear all generated images from the gallery.</p>
+              <p>Limpa todas as imagens geradas da galeria.</p>
             </TooltipContent>
           </Tooltip>
         </CardFooter>

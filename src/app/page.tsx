@@ -10,7 +10,6 @@ import { Lightbox } from '@/components/landscape/Lightbox';
 import { HowItWorks } from '@/components/landscape/HowItWorks';
 import { FAQ } from '@/components/landscape/FAQ';
 import { PullRequestList } from '@/components/landscape/PullRequestList';
-import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { GenerationOptions, GeneratedImage, GenerationProgress } from '@/lib/types';
 import { useLightbox, useToast } from '@/hooks';
@@ -87,7 +86,7 @@ export default function App() {
 
   const handleReset = () => {
     setGeneratedImages([]);
-    showToast({ type: 'info', message: 'Galeria resetada.' });
+    showToast({ type: 'info', message: 'Galeria reiniciada.' });
   };
 
   const downloadImage = async (image: GeneratedImage) => {
@@ -95,7 +94,7 @@ export default function App() {
       if (image.url.startsWith('data:')) {
         const link = document.createElement('a');
         link.href = image.url;
-        link.download = `ai-landscape-${image.id}.png`;
+        link.download = `paisagem-ia-${image.id}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -107,7 +106,7 @@ export default function App() {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `ai-landscape-${image.id}.jpg`;
+      link.download = `paisagem-ia-${image.id}.jpg`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -151,9 +150,9 @@ export default function App() {
         <Tabs defaultValue="generator" className="w-full">
           <div className="flex justify-center mb-8">
             <TabsList>
-              <TabsTrigger value="generator">Generator</TabsTrigger>
+              <TabsTrigger value="generator">Gerador</TabsTrigger>
               <TabsTrigger value="pull-requests">Pull Requests</TabsTrigger>
-              <TabsTrigger value="how-it-works">How It Works</TabsTrigger>
+              <TabsTrigger value="how-it-works">Como Funciona</TabsTrigger>
               <TabsTrigger value="faq">FAQ</TabsTrigger>
             </TabsList>
           </div>
@@ -216,7 +215,7 @@ export default function App() {
 
       <footer className="border-t border-border/40 mt-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-muted-foreground text-sm">
-            <p>© 2025 AI Landscape Generator. All rights reserved.</p>
+            <p>© 2025 Gerador de Paisagens com IA. Todos os direitos reservados.</p>
         </div>
       </footer>
 
