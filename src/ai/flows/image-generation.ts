@@ -1,10 +1,10 @@
-
-'use server';
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
 import { GenerationOptions } from '@/lib/types';
 
-export async function generateImageFlow(options: GenerationOptions): Promise<{ imageUrl: string }> {
+// This function is now a standard TypeScript module, NOT a Server Action.
+// It will be called exclusively by the API route.
+
+export async function generateImage(options: GenerationOptions): Promise<{ imageUrl: string }> {
   const { prompt, style, aspectRatio } = options;
 
   let stylePrompt = '';

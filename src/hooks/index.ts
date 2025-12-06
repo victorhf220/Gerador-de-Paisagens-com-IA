@@ -1,4 +1,3 @@
-
 'use client';
 import { useState, useCallback } from 'react';
 import { GenerationOptions, GeneratedImage, GenerationProgress, Toast } from '@/lib/types';
@@ -36,15 +35,14 @@ export const useImageGeneration = () => {
       });
 
       setProgress({ stage: 'generating', progress: 50, message: 'AI is creating...' });
+      
+      const result = await response.json();
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.details || `API request failed with status ${response.status}`);
+        throw new Error(result.error || `API request failed with status ${response.status}`);
       }
-
-      const result = await response.json();
       
-      if (!result || !result.imageUrl) {
+      if (!result.imageUrl) {
         throw new Error('Image generation failed to return a URL.');
       }
       

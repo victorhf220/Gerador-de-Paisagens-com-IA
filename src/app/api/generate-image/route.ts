@@ -1,7 +1,6 @@
-
 import { NextRequest, NextResponse } from 'next/server';
-import { generateImageFlow } from '@/ai/flows/image-generation';
-import { GenerationOptions } from '@/lib/types';
+import { generateImage } from '@/ai/flows/image-generation';
+import type { GenerationOptions } from '@/lib/types';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +13,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await generateImageFlow(options);
+    // Call the backend function to generate the image
+    const result = await generateImage(options);
 
     if (!result || !result.imageUrl) {
       console.error("AI response did not contain imageUrl:", result);
@@ -24,7 +24,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Return the successful response in the correct format
     return NextResponse.json({ imageUrl: result.imageUrl });
+
   } catch (error) {
     console.error('API Error:', error);
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
