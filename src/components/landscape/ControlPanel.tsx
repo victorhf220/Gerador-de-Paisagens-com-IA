@@ -67,11 +67,6 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
     { value: 'portrait', label: 'Portrait', description: '9:16 vertical' }
   ];
   
-  const aiModels: { value: AIModel; label: string; description: string }[] = [
-    { value: 'standard', label: 'Standard', description: 'Reliable and fast generation.' },
-    { value: 'nano_banana', label: 'Nano Banana', description: 'Experimental, high-creativity model.' },
-  ];
-
   return (
     <TooltipProvider>
       <Card className="sticky top-20 shadow-xl border-border/60">
@@ -112,21 +107,6 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             </div>
           </div>
           <div className="space-y-4">
-             <div className="space-y-2">
-                <Label htmlFor="ai-model">AI Model</Label>
-                <Select value={aiModel} onValueChange={(v) => setAiModel(v as AIModel)} disabled={isLoading}>
-                  <SelectTrigger id="ai-model">
-                    <SelectValue placeholder="Select model" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {aiModels.map((m) => (
-                      <SelectItem key={m.value} value={m.value}>
-                        {m.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="style">Art Style</Label>
