@@ -6,25 +6,31 @@ import { GenerationOptions } from '@/lib/types';
 
 const ImageGenerationInputSchema = z.object({
   prompt: z.string(),
-  style: z.enum(['Photorealistic', 'Artistic', 'Fantasy', 'Vintage']),
-  aspectRatio: z.enum(['16:9', '1:1', '9:16']),
+  style: z.enum(['photorealistic', 'artistic', 'fantasy', 'vintage']),
+  aspectRatio: z.enum(['landscape', 'square', 'portrait']),
 });
 
 export async function generateImageFlow(options: GenerationOptions): Promise<{ imageUrl: string } | undefined> {
   const { prompt, style, aspectRatio } = options;
 
   let stylePrompt = '';
-  if (style === 'Photorealistic') {
+  if (style === 'photorealistic') {
     stylePrompt = 'award-winning photograph, 8k, hyperrealistic, sharp focus';
-  } else if (style === 'Artistic') {
+  } else if (style === 'artistic') {
     stylePrompt = 'impressionist painting, vibrant colors, brushstrokes visible';
-  } else if (style === 'Fantasy') {
+  } else if (style === 'fantasy') {
     stylePrompt = 'epic fantasy digital art, trending on artstation, cinematic lighting';
-  } else if (style === 'Vintage') {
+  } else if (style === 'vintage') {
     stylePrompt = 'vintage photograph, sepia tone, grainy, 1950s';
   }
 
   const fullPrompt = `A ${style.toLowerCase()} image of: ${prompt}. ${stylePrompt}.`;
+
+  const finalAspectRatio = {
+    'landscape': '16:9',
+    'square': '1:1',
+    'portrait': '9:16'
+  }[aspectRatio];
 
   const { media } = await ai.generate({
     model: 'googleai/gemini-2.5-flash-image-preview',
@@ -49,7 +55,7 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
           threshold: 'BLOCK_NONE',
         },
       ],
-      aspectRatio,
+      aspectRatio: finalAspectRatio,
     }
   });
 
@@ -68,6 +74,7 @@ const definedFlow = ai.defineFlow(
     outputSchema: z.object({ imageUrl: z.string() }),
   },
   async (options) => {
-    return await generateImageFlow(options);
+    // This is a type assertion because the input to the defined flow will match GenerationOptions
+    return await generateImageFlow(options as GenerationOptions);
   }
 );

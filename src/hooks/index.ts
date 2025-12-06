@@ -2,52 +2,63 @@
 'use client';
 import { useState, useCallback } from 'react';
 import { GenerationOptions, GeneratedImage, GenerationProgress, Toast } from '@/lib/types';
-import { mockImages } from '@/lib/mockData';
+import { generateImageFlow } from '@/ai/flows/image-generation';
 
 export const useImageGeneration = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState<GenerationProgress | null>(null);
-  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>(mockImages);
+  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
 
   const generateImage = useCallback(async (options: GenerationOptions): Promise<GeneratedImage | null> => {
     setIsGenerating(true);
     setProgress({ stage: 'preparing', progress: 0, message: 'Preparing to generate...' });
+    const startTime = Date.now();
 
     try {
-      // Simulate generation process with progress updates
-      const stages = [
-        { stage: 'preparing' as const, progress: 20, message: 'Analyzing prompt...' },
-        { stage: 'generating' as const, progress: 50, message: 'Creating your landscape...' },
-        { stage: 'finalizing' as const, progress: 80, message: 'Finalizing details...' },
-        { stage: 'complete' as const, progress: 100, message: 'Generation complete!' }
-      ];
+      setProgress({ stage: 'preparing', progress: 20, message: 'Analyzing prompt...' });
 
-      for (const stage of stages) {
-        setProgress(stage);
-        await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 1200));
+      // Call the Genkit flow
+      const responsePromise = generateImageFlow(options);
+      
+      // Simulate progress while waiting for the API
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setProgress({ stage: 'generating', progress: 50, message: 'Creating your landscape...' });
+      
+      const response = await responsePromise;
+
+      if (!response || !response.imageUrl) {
+        throw new Error('Image generation failed to return a URL.');
       }
+      
+      setProgress({ stage: 'finalizing', progress: 80, message: 'Finalizing details...' });
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const endTime = Date.now();
+      const generationTime = (endTime - startTime) / 1000;
 
-      // Generate mock image data
       const newImage: GeneratedImage = {
         id: Date.now().toString(),
-        url: `https://picsum.photos/seed/${Math.random()}/800/600`,
+        url: response.imageUrl,
         prompt: options.prompt,
         style: options.style,
         aspectRatio: options.aspectRatio,
         createdAt: new Date().toISOString(),
-        generationTime: parseFloat((Math.random() * (15 - 5) + 5).toFixed(2))
+        generationTime: parseFloat(generationTime.toFixed(2)),
       };
-
+      
+      setProgress({ stage: 'complete', progress: 100, message: 'Generation complete!' });
       setGeneratedImages(prev => [newImage, ...prev]);
       
       await new Promise(resolve => setTimeout(resolve, 500));
       setProgress(null);
       
       return newImage;
+
     } catch (error) {
       console.error('Generation failed:', error);
       setProgress(null);
-      return null;
+      // Ensure you return null or throw an error that can be caught by the caller
+      throw error; 
     } finally {
       setIsGenerating(false);
     }
@@ -79,7 +90,6 @@ export const useToast = () => {
 
     setToasts(prev => [...prev, newToast]);
 
-    // Auto remove toast after duration
     if (newToast.duration && newToast.duration > 0) {
       setTimeout(() => {
         removeToast(id);
@@ -116,11 +126,22 @@ export const useLightbox = () => {
 
   const closeLightbox = useCallback(() => {
     setIsOpen(false);
-    setTimeout(() => setSelectedImage(null), 300); // Delay to allow animation
+    setTimeout(() => setSelectedImage(null), 300); 
   }, []);
 
   const downloadImage = useCallback(async (image: GeneratedImage) => {
     try {
+      // For data URIs, we need to handle them differently
+      if (image.url.startsWith('data:')) {
+        const link = document.createElement('a');
+        link.href = image.url;
+        link.download = `ai-landscape-${image.id}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        return true;
+      }
+      
       const response = await fetch(image.url);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
