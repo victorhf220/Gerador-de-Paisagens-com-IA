@@ -2,10 +2,21 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/landscape/Toaster";
+import { Inter, Source_Code_Pro } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+});
+
+const sourceCodePro = Source_Code_Pro({
+  subsets: ['latin'],
+  variable: '--font-source-code-pro',
+});
 
 export const metadata: Metadata = {
-  title: "AI Landscape Generator",
-  description: "Create stunning landscapes with the power of AI.",
+  title: "Content Curator AI",
+  description: "Summarize content and extract keywords with AI.",
 };
 
 export default function RootLayout({
@@ -14,22 +25,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@500;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="en" className={`${inter.variable} ${sourceCodePro.variable}`}>
       <body
         className={cn(
-          "font-body antialiased min-h-screen bg-background",
+          "min-h-screen bg-background font-body antialiased",
           "selection:bg-primary/20"
         )}
       >
