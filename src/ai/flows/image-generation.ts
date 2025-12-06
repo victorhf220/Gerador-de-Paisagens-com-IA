@@ -24,13 +24,13 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
     stylePrompt = 'vintage photograph, sepia tone, grainy, 1950s';
   }
 
-  const fullPrompt = `A ${style.toLowerCase()} image of: ${prompt}. ${stylePrompt}.`;
-
-  const finalAspectRatio = {
-    'landscape': '16:9',
-    'square': '1:1',
-    'portrait': '9:16'
+  const aspectRatioText = {
+    'landscape': 'in a 16:9 aspect ratio',
+    'square': 'in a 1:1 aspect ratio',
+    'portrait': 'in a 9:16 aspect ratio'
   }[aspectRatio];
+
+  const fullPrompt = `A ${style.toLowerCase()} image of: ${prompt}, ${aspectRatioText}. ${stylePrompt}.`;
 
   const { media } = await ai.generate({
     model: 'googleai/gemini-2.5-flash-image-preview',
@@ -55,7 +55,6 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
           threshold: 'BLOCK_NONE',
         },
       ],
-      aspectRatio: finalAspectRatio,
     }
   });
 
