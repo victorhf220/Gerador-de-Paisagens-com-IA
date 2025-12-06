@@ -9,7 +9,7 @@ export const quickPrompts = [
     { id: '6', text: 'A cyberpunk city alley in the rain' },
 ];
 
-export const faqItems = [
+export const faqData = [
   {
     id: '1',
     question: 'How does the AI landscape generator work?',
@@ -33,5 +33,36 @@ export const faqItems = [
     question: 'Can I use the generated images commercially?',
     answer:
       "Yes, all images generated through our platform can be used for personal and commercial purposes. We don't claim copyright on AI-generated content.",
+  },
+];
+
+export const howItWorksSteps = [
+  {
+    id: 1,
+    title: 'Describe Your Vision',
+    description:
+      'Write a detailed description of the landscape you want to create. Be specific about colors, mood, and elements.',
+    icon: '✍️',
+  },
+  {
+    id: 2,
+    title: 'Choose Style & Format',
+    description:
+      'Select from artistic styles like photorealistic, artistic, fantasy, or vintage. Pick your preferred aspect ratio.',
+    icon: '🎨',
+  },
+  {
+    id: 3,
+    title: 'AI Generation',
+    description:
+      'Our advanced AI processes your request and generates a unique landscape image based on your specifications.',
+    icon: '🤖',
+  },
+  {
+    id: 4,
+    title: 'Download & Share',
+    description:
+      'View your generated landscape in high quality, download it, or share it directly from the platform.',
+    icon: '📱',
   },
 ];

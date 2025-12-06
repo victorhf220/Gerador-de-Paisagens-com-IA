@@ -1,82 +1,54 @@
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Card } from '@/components/ui/card';
-import { Lightbulb, Pencil, Download, Bot } from 'lucide-react';
+import { howItWorksSteps } from '@/lib/mockData';
 
-const steps = [
-  {
-    icon: Pencil,
-    title: 'Describe Your Vision',
-    description:
-      'Write a detailed description of the landscape you want to create. Be specific about colors, mood, and elements.',
-  },
-  {
-    icon: Lightbulb,
-    title: 'Choose Style & Format',
-    description:
-      'Select from artistic styles like photorealistic, artistic, fantasy, or vintage. Pick your preferred aspect ratio.',
-  },
-  {
-    icon: Bot,
-    title: 'AI Generation',
-    description:
-      'Our advanced AI processes your request and generates a unique landscape image based on your specifications.',
-  },
-  {
-    icon: Download,
-    title: 'Download & Share',
-    description:
-      'View your generated landscape in high quality, download it, or share it directly from the platform.',
-  },
-];
-
-export function HowItWorks() {
-  const sectionVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { type: 'spring' } },
-  };
-
+export const HowItWorks: React.FC = () => {
   return (
-    <section>
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-headline font-bold text-foreground">How It Works</h2>
+    <motion.section
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="space-y-8"
+    >
+      <div className="text-center space-y-4">
+        <h2 className="text-3xl font-headline font-bold text-foreground">
+          How It Works
+        </h2>
         <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-          Creating stunning AI landscapes is simple with our four-step process.
+          Creating stunning AI landscapes is simple with our four-step process
         </p>
       </div>
-      <motion.div
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-      >
-        {steps.map((step, index) => {
-          const Icon = step.icon;
-          return (
-            <motion.div key={index} variants={itemVariants}>
-              <Card className="p-6 h-full text-center bg-card/50 shadow-none border-border/30">
-                <div className="flex justify-center mb-4">
-                  <div className="bg-secondary p-3 rounded-full">
-                    <Icon className="w-8 h-8 text-primary" />
-                  </div>
-                </div>
-                <h3 className="font-headline text-lg font-semibold text-foreground mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-muted-foreground text-sm">{step.description}</p>
-              </Card>
-            </motion.div>
-          );
-        })}
-      </motion.div>
-    </section>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {howItWorksSteps.map((step, index) => (
+          <motion.div
+            key={step.id}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 }}
+            className="card text-center space-y-4 hover:border-primary/50 transition-colors duration-300 p-6 bg-card/50 shadow-none border-border/30"
+          >
+            <div className="text-4xl mb-4">{step.icon}</div>
+            
+            <div className="space-y-2">
+              <div className="flex items-center justify-center gap-2">
+                <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-full">
+                  Step {step.id}
+                </span>
+              </div>
+              
+              <h3 className="text-lg font-headline font-semibold text-foreground">
+                {step.title}
+              </h3>
+              
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {step.description}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </motion.section>
   );
-}
+};

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { faqItems as faqData } from '@/lib/mockData';
+import { faqData } from '@/lib/mockData';
 
 interface FAQItemProps {
   question: string;
