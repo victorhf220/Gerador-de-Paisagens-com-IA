@@ -35,7 +35,7 @@ export const useImageGeneration = () => {
         style: options.style,
         aspectRatio: options.aspectRatio,
         createdAt: new Date().toISOString(),
-        generationTime: Math.floor(Math.random() * 20) + 10
+        generationTime: parseFloat((Math.random() * (15 - 5) + 5).toFixed(2))
       };
 
       setGeneratedImages(prev => [newImage, ...prev]);
