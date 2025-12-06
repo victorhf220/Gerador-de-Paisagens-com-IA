@@ -23,8 +23,11 @@ export const useImageGeneration = () => {
         body: JSON.stringify(options),
       });
 
+      setProgress({ stage: 'generating', progress: 50, message: 'AI is creating...' });
+
       if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.details || `API request failed with status ${response.status}`);
       }
 
       const result = await response.json();
@@ -34,7 +37,6 @@ export const useImageGeneration = () => {
       }
       
       setProgress({ stage: 'finalizing', progress: 80, message: 'Finalizing details...' });
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
       const endTime = Date.now();
       const generationTime = (endTime - startTime) / 1000;
@@ -54,16 +56,15 @@ export const useImageGeneration = () => {
       setGeneratedImages(prev => [newImage, ...prev]);
       
       await new Promise(resolve => setTimeout(resolve, 500));
-      setProgress(null);
-      setIsGenerating(false);
       
       return newImage;
 
     } catch (error) {
       console.error('Generation failed:', error);
+      throw error; 
+    } finally {
       setIsGenerating(false);
       setProgress(null);
-      throw error; 
     }
   }, []);
 
@@ -134,7 +135,6 @@ export const useLightbox = () => {
 
   const downloadImage = useCallback(async (image: GeneratedImage) => {
     try {
-      // For data URIs, we need to handle them differently
       if (image.url.startsWith('data:')) {
         const link = document.createElement('a');
         link.href = image.url;

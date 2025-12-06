@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, RotateCcw } from 'lucide-react';
-import type { GenerationOptions, ArtStyle, AspectRatio, AIModel } from '@/lib/types';
+import type { GenerationOptions, ArtStyle, AspectRatio } from '@/lib/types';
 import { quickPrompts } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,7 +29,6 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState<ArtStyle>('photorealistic');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('landscape');
-  const [aiModel, setAiModel] = useState<AIModel>('standard');
 
   const handleGenerate = () => {
     if (prompt.trim() && !isLoading) {
@@ -37,7 +36,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         prompt: prompt.trim(),
         style,
         aspectRatio,
-        aiModel,
+        aiModel: 'standard',
       });
     }
   };

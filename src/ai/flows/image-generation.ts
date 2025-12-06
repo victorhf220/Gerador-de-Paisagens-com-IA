@@ -4,12 +4,6 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { GenerationOptions } from '@/lib/types';
 
-const ImageGenerationInputSchema = z.object({
-  prompt: z.string(),
-  style: z.enum(['photorealistic', 'artistic', 'fantasy', 'vintage']),
-  aspectRatio: z.enum(['landscape', 'square', 'portrait']),
-});
-
 export async function generateImageFlow(options: GenerationOptions): Promise<{ imageUrl: string }> {
   const { prompt, style, aspectRatio } = options;
 
@@ -51,14 +45,3 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
   }
   return { imageUrl };
 }
-
-ai.defineFlow(
-  {
-    name: 'generateImageFlow',
-    inputSchema: ImageGenerationInputSchema,
-    outputSchema: z.object({ imageUrl: z.string() }),
-  },
-  async (options) => {
-    return await generateImageFlow(options as GenerationOptions);
-  }
-);

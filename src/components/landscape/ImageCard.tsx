@@ -53,8 +53,6 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
         return 'aspect-video';
     }
   };
-  
-  const modelLabel = image.aiModel === 'nano_banana' ? 'Nano Banana' : 'Standard';
 
   return (
     <motion.div
@@ -90,7 +88,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
                 </span>
                 <span className="flex items-center gap-1">
                   <Cpu size={12} />
-                   {modelLabel}
+                   Standard
                 </span>
               </div>
               <span>{timeAgo}</span>
