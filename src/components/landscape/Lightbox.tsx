@@ -82,6 +82,7 @@ export const Lightbox: React.FC<LightboxProps> = ({
                     variant="secondary"
                     size="icon"
                     aria-label="Fullscreen"
+                    onClick={() => window.open(image.url, '_blank')}
                   >
                     <Maximize2 size={20} />
                   </Button>
