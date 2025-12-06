@@ -3,11 +3,23 @@ import { useState } from 'react';
 import { ControlPanel } from '@/components/landscape/ControlPanel';
 import { ImageGallery } from '@/components/landscape/ImageGallery';
 import { GeneratedImage, GenerationOptions, GenerationState } from '@/lib/types';
-import { generateImageFlow } from '@/ai/flows/generate-image-flow';
 import { useToast } from '@/hooks/use-toast';
 import { AnimatePresence } from 'framer-motion';
 import { AppHeader } from '@/components/landscape/AppHeader';
 import { LoadingOverlay } from '@/components/landscape/LoadingOverlay';
+
+// Mock function to simulate image generation
+const generateImageFlow = async (options: GenerationOptions): Promise<{ imageUrl: string }> => {
+  console.log('Generating image with options:', options);
+  await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate network delay
+  const seed = Math.random().toString(36).substring(7);
+  const [width, height] = options.aspectRatio === '16:9' ? [1280, 720]
+                         : options.aspectRatio === '1:1' ? [1024, 1024]
+                         : [720, 1280];
+  const imageUrl = `https://picsum.photos/seed/${seed}/${width}/${height}`;
+  return { imageUrl };
+};
+
 
 export default function Home() {
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
