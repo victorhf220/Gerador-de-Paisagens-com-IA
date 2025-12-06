@@ -42,7 +42,7 @@ export default function Home() {
             <ControlPanel onGenerate={generateImage} onReset={resetGallery} isLoading={isGenerating} />
           </div>
           <div className="lg:col-span-8 xl:col-span-9">
-            <ImageGallery images={generatedImages} onSelectImage={openLightbox} />
+            <ImageGallery images={generatedImages} onImageClick={openLightbox} />
           </div>
         </div>
         
@@ -55,15 +55,12 @@ export default function Home() {
         <FAQ />
       </main>
 
-      <AnimatePresence>
-        {isOpen && selectedImage && (
-            <Lightbox 
-                image={selectedImage} 
-                onClose={closeLightbox} 
-                onDownload={() => downloadImage(selectedImage)} 
-            />
-        )}
-      </AnimatePresence>
+      <Lightbox 
+        image={selectedImage} 
+        isOpen={isOpen}
+        onClose={closeLightbox} 
+        onDownload={downloadImage}
+      />
     </div>
   );
 }
