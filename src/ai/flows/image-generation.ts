@@ -24,10 +24,10 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
     stylePrompt = 'vintage photograph, sepia tone, grainy, 1950s';
   }
 
-  const fullPrompt = `Generate an image of: ${prompt}. The image should be in a ${style.toLowerCase()} style. ${stylePrompt}. The aspect ratio should be ${aspectRatio}.`;
+  const fullPrompt = `A ${style.toLowerCase()} image of: ${prompt}. ${stylePrompt}.`;
 
   const { media } = await ai.generate({
-    model: 'googleai/gemini-1.5-flash',
+    model: 'googleai/imagen-2.0-fast-generate',
     prompt: fullPrompt,
     config: {
       safetySettings: [
@@ -48,6 +48,7 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
           threshold: 'BLOCK_NONE',
         },
       ],
+      aspectRatio,
     }
   });
 
