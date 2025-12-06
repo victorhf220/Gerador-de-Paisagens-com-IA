@@ -30,14 +30,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  devIndicators: {
-    buildActivity: false,
-  },
-  experimental: {
-    // This is to allow the Next.js dev server to accept requests from any origin.
-    // In a real production scenario, you'd want to be more restrictive.
-    allowedDevOrigins: ['**'],
-  },
 };
 
 export default nextConfig;
