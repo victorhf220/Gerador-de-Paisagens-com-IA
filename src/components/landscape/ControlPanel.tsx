@@ -66,6 +66,11 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
     { value: 'square', label: 'Square', description: '1:1 balanced' },
     { value: 'portrait', label: 'Portrait', description: '9:16 vertical' }
   ];
+
+  const aiModels: { value: AIModel; label: string; description: string }[] = [
+    { value: 'standard', label: 'Standard', description: 'Reliable and fast' },
+    { value: 'nano_banana', label: 'Nano Banana', description: 'Advanced and creative' }
+  ];
   
   return (
     <TooltipProvider>
@@ -142,6 +147,24 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="ai-model">AI Model</Label>
+              <Select value={aiModel} onValueChange={(v) => setAiModel(v as AIModel)} disabled={isLoading}>
+                <SelectTrigger id="ai-model">
+                  <SelectValue placeholder="Select model" />
+                </SelectTrigger>
+                <SelectContent>
+                  {aiModels.map((m) => (
+                    <SelectItem key={m.value} value={m.value}>
+                      <div className="flex flex-col">
+                        <span>{m.label}</span>
+                        <span className="text-xs text-muted-foreground">{m.description}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardContent>
