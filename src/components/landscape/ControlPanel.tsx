@@ -1,44 +1,66 @@
 'use client';
-import { useState } from 'react';
-import { WandSparkles, Sparkles, RotateCcw, Loader2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Sparkles, RotateCcw } from 'lucide-react';
+import type { GenerationOptions, ArtStyle, AspectRatio } from '@/lib/types';
+import { quickPrompts } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { ArtStyle, AspectRatio, GenerationOptions } from '@/lib/types';
+import { WandSparkles, Loader2 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
-const artStyles: ArtStyle[] = ['Photorealistic', 'Artistic', 'Fantasy', 'Vintage'];
-const aspectRatios: AspectRatio[] = ['16:9', '1:1', '9:16'];
-const quickPrompts = [
-  'A serene lake reflecting a vibrant sunset.',
-  'Misty mountains shrouded in morning fog.',
-  'A futuristic city with flying vehicles.',
-  'An enchanted forest with glowing mushrooms.',
-];
 
-type ControlPanelProps = {
+interface ControlPanelProps {
   onGenerate: (options: GenerationOptions) => void;
   onReset: () => void;
   isLoading: boolean;
-};
+}
 
-export function ControlPanel({ onGenerate, onReset, isLoading }: ControlPanelProps) {
+export const ControlPanel: React.FC<ControlPanelProps> = ({
+  onGenerate,
+  onReset,
+  isLoading
+}) => {
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState<ArtStyle>('Photorealistic');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('16:9');
 
-  const handleGenerateClick = () => {
-    if (prompt.trim()) {
-      onGenerate({ prompt, style, aspectRatio });
+  const handleGenerate = () => {
+    if (prompt.trim() && !isLoading) {
+      onGenerate({
+        prompt: prompt.trim(),
+        style,
+        aspectRatio
+      });
     }
   };
 
-  const inspireMe = () => {
-    const randomPrompt = quickPrompts[Math.floor(Math.random() * quickPrompts.length)];
-    setPrompt(randomPrompt);
+  const handleReset = () => {
+    setPrompt('');
+    setStyle('Photorealistic');
+    setAspectRatio('16:9');
+    onReset();
   };
+
+  const handleQuickPrompt = (quickPrompt: string) => {
+    setPrompt(quickPrompt);
+  };
+
+  const artStyles: { value: ArtStyle; label: string; description: string }[] = [
+    { value: 'Photorealistic', label: 'Photorealistic', description: 'Real-world photography style' },
+    { value: 'Artistic', label: 'Artistic', description: 'Creative and stylized' },
+    { value: 'Fantasy', label: 'Fantasy', description: 'Imaginative and magical' },
+    { value: 'Vintage', label: 'Vintage', description: 'Retro and nostalgic' }
+  ];
+
+  const aspectRatios: { value: AspectRatio; label: string; description: string }[] = [
+    { value: '16:9', label: 'Landscape', description: '16:9 widescreen' },
+    { value: '1:1', label: 'Square', description: '1:1 balanced' },
+    { value: '9:16', label: 'Portrait', description: '9:16 vertical' }
+  ];
 
   return (
     <TooltipProvider>
@@ -64,16 +86,19 @@ export function ControlPanel({ onGenerate, onReset, isLoading }: ControlPanelPro
           </div>
           <div className="space-y-2">
             <Label>Inspire Me</Label>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={inspireMe}
-                disabled={isLoading}
-              >
-                <Sparkles className="mr-2" />
-                Get a random prompt
-              </Button>
+            <div className="flex flex-wrap gap-2">
+              {quickPrompts.slice(0, 4).map((quickPrompt) => (
+                <Button
+                  key={quickPrompt.id}
+                  onClick={() => handleQuickPrompt(quickPrompt.text)}
+                  variant="outline"
+                  size="sm"
+                  className="text-xs"
+                  disabled={isLoading}
+                >
+                  {quickPrompt.text}
+                </Button>
+              ))}
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -85,8 +110,8 @@ export function ControlPanel({ onGenerate, onReset, isLoading }: ControlPanelPro
                 </SelectTrigger>
                 <SelectContent>
                   {artStyles.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s}
+                    <SelectItem key={s.value} value={s.value}>
+                      {s.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -104,8 +129,8 @@ export function ControlPanel({ onGenerate, onReset, isLoading }: ControlPanelPro
                 </SelectTrigger>
                 <SelectContent>
                   {aspectRatios.map((r) => (
-                    <SelectItem key={r} value={r}>
-                      {r}
+                    <SelectItem key={r.value} value={r.value}>
+                      {r.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -117,7 +142,7 @@ export function ControlPanel({ onGenerate, onReset, isLoading }: ControlPanelPro
           <Button
             size="lg"
             className="w-full font-bold"
-            onClick={handleGenerateClick}
+            onClick={handleGenerate}
             disabled={!prompt.trim() || isLoading}
           >
             {isLoading ? <Loader2 className="animate-spin" /> : <Sparkles />}
@@ -128,7 +153,7 @@ export function ControlPanel({ onGenerate, onReset, isLoading }: ControlPanelPro
               <Button
                 variant="ghost"
                 className="w-full text-muted-foreground"
-                onClick={onReset}
+                onClick={handleReset}
                 disabled={isLoading}
               >
                 <RotateCcw className="mr-2" />
@@ -143,4 +168,4 @@ export function ControlPanel({ onGenerate, onReset, isLoading }: ControlPanelPro
       </Card>
     </TooltipProvider>
   );
-}
+};
