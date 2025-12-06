@@ -37,7 +37,7 @@ export default function Home() {
       <AppHeader />
       
       <main className="flex-1 container mx-auto p-4 sm:p-6 lg:p-8 space-y-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
           <div className="lg:col-span-4 xl:col-span-3">
             <ControlPanel onGenerate={generateImage} onReset={resetGallery} isLoading={isGenerating} />
           </div>
