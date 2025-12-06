@@ -1,8 +1,7 @@
+// This file is a standard TypeScript module, NOT a Server Action.
+// It is imported and used by the API route.
 import { ai } from '@/ai/genkit';
 import { GenerationOptions } from '@/lib/types';
-
-// This function is now a standard TypeScript module, NOT a Server Action.
-// It will be called exclusively by the API route.
 
 export async function generateImage(options: GenerationOptions): Promise<{ imageUrl: string }> {
   const { prompt, style, aspectRatio } = options;
