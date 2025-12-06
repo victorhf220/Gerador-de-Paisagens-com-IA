@@ -12,7 +12,7 @@ export function useImageGeneration() {
     progress: 0,
     message: '',
   });
-  const { toast } = useToast();
+  const { addToast } = useToast();
 
   const generateImage = async (options: GenerationOptions): Promise<GeneratedImage | null> => {
     const startTime = Date.now();
@@ -44,10 +44,7 @@ export function useImageGeneration() {
       setGeneratedImages((prev) => [newImage, ...prev]);
       setGenerationProgress({ stage: 'complete', progress: 100, message: 'Generation complete!' });
       
-      toast({
-        title: 'Image Generated!',
-        description: 'Your new landscape has been added to the gallery.',
-      });
+      addToast('Image Generated! Your new landscape has been added to the gallery.', 'success');
 
       setTimeout(() => setGenerationProgress({ stage: 'idle', progress: 0, message: '' }), 1500);
       return newImage;
@@ -55,11 +52,8 @@ export function useImageGeneration() {
       console.error(error);
       const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
       setGenerationProgress({ stage: 'error', progress: 0, message: 'Generation failed.' });
-      toast({
-        variant: 'destructive',
-        title: 'Generation Failed',
-        description: errorMessage,
-      });
+      addToast(`Generation Failed: ${errorMessage}`, 'error');
+
       setTimeout(() => setGenerationProgress({ stage: 'idle', progress: 0, message: '' }), 2000);
       return null;
     }
@@ -67,10 +61,7 @@ export function useImageGeneration() {
 
   const resetGallery = () => {
     setGeneratedImages([]);
-    toast({
-      title: 'Gallery Cleared',
-      description: 'All generated images have been removed.',
-    });
+    addToast('Gallery Cleared. All generated images have been removed.', 'info');
   };
 
   return {

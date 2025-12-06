@@ -4,7 +4,7 @@ import { useToast } from './use-toast';
 
 export function useLightbox() {
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
-  const { toast } = useToast();
+  const { addToast } = useToast();
 
   const openLightbox = (image: GeneratedImage) => setSelectedImage(image);
   const closeLightbox = () => setSelectedImage(null);
@@ -31,19 +31,12 @@ export function useLightbox() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
-      toast({
-        title: 'Download Started',
-        description: 'Your image is being downloaded.',
-      });
+      addToast('Download Started. Your image is being downloaded.', 'success');
       return true;
 
     } catch (error) {
       console.error('Download failed:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Download Failed',
-        description: 'Could not download the image. Please try again.',
-      });
+      addToast('Download Failed. Could not download the image. Please try again.', 'error');
       return false;
     }
   };
