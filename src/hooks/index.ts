@@ -1,11 +1,23 @@
+
 'use client';
 import { useState, useCallback } from 'react';
 import { GenerationOptions, GeneratedImage, GenerationProgress, Toast } from '@/lib/types';
 
+const exampleImage: GeneratedImage = {
+  id: 'example-1',
+  url: 'https://picsum.photos/seed/1/1024/576',
+  prompt: 'A beautiful mountain landscape at sunset, serving as a placeholder.',
+  style: 'photorealistic',
+  aspectRatio: 'landscape',
+  createdAt: new Date().toISOString(),
+  generationTime: 0.5,
+  aiModel: 'standard',
+};
+
 export const useImageGeneration = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState<GenerationProgress | null>(null);
-  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
+  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([exampleImage]);
 
   const generateImage = useCallback(async (options: GenerationOptions): Promise<GeneratedImage | null> => {
     setIsGenerating(true);
@@ -13,7 +25,7 @@ export const useImageGeneration = () => {
     const startTime = Date.now();
 
     try {
-      setProgress({ stage: 'preparing', progress: 20, message: 'Sending request...' });
+      setProgress({ stage: 'preparing', progress: 20, message: 'Sending request to API...' });
       
       const response = await fetch('/api/generate-image', {
         method: 'POST',
