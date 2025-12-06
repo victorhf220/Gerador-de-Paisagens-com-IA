@@ -1,3 +1,4 @@
+
 import { MountainSnow } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -24,7 +25,7 @@ export function AppHeader() {
             FAQ
           </a>
           <a href="#gallery" className="text-muted-foreground hover:text-foreground transition-colors">
-            Gallery
+            Especificar
           </a>
         </nav>
       </div>
