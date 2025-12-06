@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, useCallback } from 'react';
 import { GenerationOptions, GeneratedImage, GenerationProgress, Toast } from '@/lib/types';

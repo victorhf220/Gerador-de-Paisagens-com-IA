@@ -1,3 +1,4 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 import { generateImage } from '@/ai/flows/image-generation';
 import type { GenerationOptions } from '@/lib/types';
@@ -13,7 +14,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call the backend function to generate the image
     const result = await generateImage(options);
 
     if (!result || !result.imageUrl) {
@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Return the successful response in the correct format
     return NextResponse.json({ imageUrl: result.imageUrl });
 
   } catch (error) {
