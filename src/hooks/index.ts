@@ -71,8 +71,12 @@ export const useImageGeneration = () => {
       setProgress({ stage: 'preparing', progress: 20, message: 'Sending request...' });
       const response = await generateImageFlow(options);
       
-      if (response && response.taskId && options.aiModel === 'nano_banana') {
-        return await pollForImage(response.taskId, options);
+      if (options.aiModel === 'nano_banana') {
+        if (response && response.taskId) {
+          return await pollForImage(response.taskId, options);
+        } else {
+           throw new Error('Nano Banana API did not return a task ID.');
+        }
       }
 
       if (!response || !response.imageUrl) {
