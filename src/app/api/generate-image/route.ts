@@ -1,36 +1,16 @@
+import { generateImage } from '@/lib/generateImage';
+import { NextRequest } from 'next/server';
 
-import { NextRequest, NextResponse } from 'next/server';
-import { generateImage } from '@/ai/flows/image-generation';
-import type { GenerationOptions } from '@/lib/types';
-
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const options = (await request.json()) as GenerationOptions;
-
-    if (!options.prompt || !options.style || !options.aspectRatio) {
-      return NextResponse.json(
-        { error: 'Missing required generation options.' },
-        { status: 400 }
-      );
-    }
-
+    const options = await req.json();
     const result = await generateImage(options);
 
-    if (!result || !result.imageUrl) {
-      console.error("AI response did not contain imageUrl:", result);
-      return NextResponse.json(
-        { error: 'Image generation failed on the server.' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ imageUrl: result.imageUrl });
-
-  } catch (error) {
-    console.error('API Error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    return NextResponse.json(
-      { error: 'Failed to generate image.', details: errorMessage },
+    return Response.json(result);
+  } catch (error: any) {
+    console.error('[API_GENERATE_IMAGE_ERROR]', error);
+    return Response.json(
+      { error: error.message || 'Failed to generate image' },
       { status: 500 }
     );
   }
