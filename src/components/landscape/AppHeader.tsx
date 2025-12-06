@@ -16,18 +16,6 @@ export function AppHeader() {
             AI Landscape Generator
           </h1>
         </motion.div>
-        
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
-            How It Works
-          </a>
-          <a href="#faq" className="text-muted-foreground hover:text-foreground transition-colors">
-            FAQ
-          </a>
-          <a href="#gallery" className="text-muted-foreground hover:text-foreground transition-colors">
-            Gallery
-          </a>
-        </nav>
       </div>
     </header>
   );

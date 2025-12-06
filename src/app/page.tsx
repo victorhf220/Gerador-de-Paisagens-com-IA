@@ -10,6 +10,7 @@ import { Lightbox } from '@/components/landscape/Lightbox';
 import { HowItWorks } from '@/components/landscape/HowItWorks';
 import { FAQ } from '@/components/landscape/FAQ';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { GenerationOptions, GeneratedImage, GenerationProgress } from '@/lib/types';
 import { useLightbox, useToast } from '@/hooks';
 
@@ -63,7 +64,7 @@ export default function App() {
         style: options.style,
         aspectRatio: options.aspectRatio,
         generationTime: parseFloat(generationTime.toFixed(2)),
-        aiModel: 'standard', 
+        aiModel: options.aiModel || 'standard', 
       };
 
       setProgress({ stage: 'complete', progress: 100, message: 'Imagem gerada!' });
@@ -145,60 +146,69 @@ export default function App() {
     <div className="flex flex-col min-h-screen">
       <AppHeader />
 
-      <main className="flex-1 container mx-auto p-4 sm:p-6 lg:p-8 space-y-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
-          <div className="lg:col-span-4 xl:col-span-3">
-            <ControlPanel
-              onGenerate={handleGenerate}
-              onReset={handleReset}
-              isLoading={isGenerating}
-            />
+      <main className="flex-1 container mx-auto p-4 sm:p-6 lg:p-8">
+        <Tabs defaultValue="generator" className="w-full">
+          <div className="flex justify-center mb-8">
+            <TabsList>
+              <TabsTrigger value="generator">Generator</TabsTrigger>
+              <TabsTrigger value="how-it-works">How It Works</TabsTrigger>
+              <TabsTrigger value="faq">FAQ</TabsTrigger>
+            </TabsList>
           </div>
+          
+          <TabsContent value="generator">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div className="lg:col-span-4 xl:col-span-3">
+                <ControlPanel
+                  onGenerate={handleGenerate}
+                  onReset={handleReset}
+                  isLoading={isGenerating}
+                />
+              </div>
 
-          <div className="lg:col-span-8 xl:col-span-9" id="gallery">
-            <AnimatePresence mode="wait">
-              {isGenerating && progress ? (
-                <motion.div
-                  key="loading"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex items-center justify-center min-h-[70vh]"
-                >
-                  <Loading progress={progress} />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="gallery"
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <ImageGallery
-                    images={generatedImages}
-                    onImageClick={openLightbox}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
+              <div className="lg:col-span-8 xl:col-span-9" id="gallery">
+                <AnimatePresence mode="wait">
+                  {isGenerating && progress ? (
+                    <motion.div
+                      key="loading"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="flex items-center justify-center min-h-[70vh]"
+                    >
+                      <Loading progress={progress} />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="gallery"
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <ImageGallery
+                        images={generatedImages}
+                        onImageClick={openLightbox}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          </TabsContent>
 
-        <Separator className="bg-border/40" />
+          <TabsContent value="how-it-works">
+            <HowItWorks />
+          </TabsContent>
+          
+          <TabsContent value="faq">
+            <FAQ />
+          </TabsContent>
 
-        <section id="how-it-works">
-          <HowItWorks />
-        </section>
-
-        <Separator className="bg-border/40" />
-        
-        <section id="faq">
-          <FAQ />
-        </section>
+        </Tabs>
       </main>
 
-      <footer className="border-t border-border/40">
+      <footer className="border-t border-border/40 mt-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-muted-foreground text-sm">
             <p>© 2025 AI Landscape Generator. All rights reserved.</p>
         </div>
