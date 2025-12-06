@@ -17,8 +17,9 @@ export async function POST(request: NextRequest) {
     const result = await generateImageFlow(options);
 
     if (!result || !result.imageUrl) {
+      console.error("AI response did not contain imageUrl:", result);
       return NextResponse.json(
-        { error: 'Image generation failed.' },
+        { error: 'Image generation failed on the server.' },
         { status: 500 }
       );
     }
