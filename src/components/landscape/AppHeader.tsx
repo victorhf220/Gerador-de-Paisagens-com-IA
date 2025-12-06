@@ -25,6 +25,9 @@ export function AppHeader() {
             FAQ
           </a>
           <a href="#gallery" className="text-muted-foreground hover:text-foreground transition-colors">
+            Gallery
+          </a>
+          <a href="#especificar" className="text-muted-foreground hover:text-foreground transition-colors">
             Especificar
           </a>
         </nav>
