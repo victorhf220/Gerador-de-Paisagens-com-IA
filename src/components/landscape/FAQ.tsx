@@ -1,34 +1,82 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 
-const faqItems = [
-  {
-    question: 'How does the AI landscape generator work?',
-    answer:
-      'Our AI uses advanced machine learning models trained on millions of landscape images to understand and generate new landscapes based on your text descriptions. The AI interprets your prompt and creates unique, high-quality landscape images.',
-  },
-  {
-    question: 'What image formats are supported for download?',
-    answer:
-      'We generate images in a web-optimized format. You can download them as high-quality JPG files directly from the lightbox view.',
-  },
-  {
-    question: 'How long does it take to generate an image?',
-    answer:
-      'Image generation typically takes 10-30 seconds depending on the complexity of your prompt and the selected style. You\'ll see real-time progress updates during the generation process.',
-  },
-  {
-    question: 'Can I use the generated images commercially?',
-    answer:
-      "Yes, all images generated through our platform can be used for personal and commercial purposes. We don't claim copyright on AI-generated content.",
-  },
-];
+'use client';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { faqItems as faqData } from '@/lib/mockData';
+
+interface FAQItemProps {
+  question: string;
+  answer: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  index: number;
+}
+
+const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onToggle, index }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.05 }}
+      className="border border-border/30 rounded-lg overflow-hidden bg-card/50"
+    >
+      <button
+        onClick={onToggle}
+        className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-accent/50 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        aria-expanded={isOpen}
+        aria-controls={`faq-answer-${index}`}
+      >
+        <h3 className="text-lg font-medium text-foreground pr-4">
+          {question}
+        </h3>
+        <div className="flex-shrink-0">
+          {isOpen ? (
+            <ChevronUp className="w-5 h-5 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-muted-foreground" />
+          )}
+        </div>
+      </button>
+      
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            <div
+              id={`faq-answer-${index}`}
+              className="px-6 pb-4 pt-2 border-t border-border/30"
+            >
+              <p className="text-muted-foreground leading-relaxed">
+                {answer}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
 
 export function FAQ() {
+  const [openItems, setOpenItems] = useState<Set<number>>(new Set());
+
+  const toggleItem = (index: number) => {
+    const newOpenItems = new Set(openItems);
+    if (newOpenItems.has(index)) {
+      newOpenItems.delete(index);
+    } else {
+      newOpenItems.add(index);
+    }
+    setOpenItems(newOpenItems);
+  };
+
   return (
     <section>
       <div className="text-center mb-12">
@@ -39,24 +87,19 @@ export function FAQ() {
           Everything you need to know about our AI landscape generator.
         </p>
       </div>
-      <div className="max-w-3xl mx-auto">
-        <Accordion type="single" collapsible className="w-full space-y-4">
-          {faqItems.map((item, index) => (
-            <AccordionItem
-              key={index}
-              value={`item-${index}`}
-              className="bg-card/50 border border-border/30 rounded-lg px-6"
-            >
-              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline">
-                {item.question}
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground pt-2">
-                {item.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+
+      <div className="max-w-3xl mx-auto space-y-4">
+        {faqData.map((faq, index) => (
+          <FAQItem
+            key={index}
+            question={faq.question}
+            answer={faq.answer}
+            isOpen={openItems.has(index)}
+            onToggle={() => toggleItem(index)}
+            index={index}
+          />
+        ))}
       </div>
     </section>
   );
-}
+};
