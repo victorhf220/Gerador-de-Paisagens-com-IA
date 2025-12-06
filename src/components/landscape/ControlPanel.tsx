@@ -98,6 +98,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                   size="sm"
                   className="text-xs"
                   disabled={isLoading}
+                  aria-label={`Use a quick prompt: ${quickPrompt.text}`}
                 >
                   {quickPrompt.text}
                 </Button>

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AppHeader } from '@/components/landscape/AppHeader';
 import { ControlPanel } from '@/components/landscape/ControlPanel';
 import { ImageGallery } from '@/components/landscape/ImageGallery';
@@ -26,7 +26,6 @@ export default function App() {
   const [progress, setProgress] = React.useState<GenerationProgress | null>(null);
   const [generatedImages, setGeneratedImages] = React.useState<GeneratedImage[]>([]);
 
-  // ✅ GERAÇÃO VIA API ROUTE (PADRÃO CORRETO E ESTÁVEL)
   const handleGenerate = async (options: GenerationOptions) => {
     setIsGenerating(true);
     setProgress({ stage: 'preparing', progress: 10, message: 'Iniciando geração...' });
@@ -40,7 +39,6 @@ export default function App() {
         body: JSON.stringify(options),
       });
 
-      // ✅ VALIDAÇÃO DA RESPOSTA DA API
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.error || 'Falha ao se comunicar com a API');
@@ -48,7 +46,6 @@ export default function App() {
       
       setProgress({ stage: 'generating', progress: 70, message: 'Aguardando a imagem...' });
       
-      // ✅ API RETORNA APENAS { imageUrl: "..." }
       const { imageUrl } = await res.json();
 
       if (!imageUrl) {
@@ -58,7 +55,6 @@ export default function App() {
       const endTime = Date.now();
       const generationTime = (endTime - startTime) / 1000;
       
-      // ✅ FRONTEND MONTA O OBJETO COMPLETO
       const newImage: GeneratedImage = {
         id: crypto.randomUUID(),
         url: imageUrl,
@@ -159,17 +155,33 @@ export default function App() {
             />
           </div>
 
-          <div className="lg:col-span-8 xl:col-span-9">
-            {isGenerating && progress ? (
-              <div className="flex items-center justify-center min-h-[70vh]">
-                <Loading progress={progress} />
-              </div>
-            ) : (
-              <ImageGallery
-                images={generatedImages}
-                onImageClick={openLightbox}
-              />
-            )}
+          <div className="lg:col-span-8 xl:col-span-9" id="gallery">
+            <AnimatePresence mode="wait">
+              {isGenerating && progress ? (
+                <motion.div
+                  key="loading"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex items-center justify-center min-h-[70vh]"
+                >
+                  <Loading progress={progress} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="gallery"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <ImageGallery
+                    images={generatedImages}
+                    onImageClick={openLightbox}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 

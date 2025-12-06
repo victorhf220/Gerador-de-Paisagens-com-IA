@@ -3,6 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { GenerationProgress } from '@/lib/types';
 import { Progress } from '../ui/progress';
+import { Card, CardContent } from '../ui/card';
 
 interface LoadingProps {
   progress: GenerationProgress;
@@ -25,32 +26,38 @@ export const Loading: React.FC<LoadingProps> = ({ progress }) => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="card text-center space-y-6"
-    >
-      <div className="space-y-4">
-        <div className="text-6xl">{getStageIcon()}</div>
-        <h3 className="text-xl font-semibold text-foreground">
-          {progress.message}
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          Stage: {progress.stage.charAt(0).toUpperCase() + progress.stage.slice(1)}
-        </p>
-      </div>
-      
-      <div className="space-y-3">
-        <Progress value={progress.progress} className="h-2" />
-        <p className="text-sm text-muted-foreground">
-          {progress.progress}% complete
-        </p>
-      </div>
+    <Card className="text-center w-full max-w-md">
+      <CardContent className="p-8 space-y-6">
+        <div className="space-y-4">
+          <motion.div
+            key={progress.stage}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className="text-6xl"
+          >
+            {getStageIcon()}
+          </motion.div>
+          <h3 className="text-xl font-semibold text-foreground">
+            {progress.message}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Stage: {progress.stage.charAt(0).toUpperCase() + progress.stage.slice(1)}
+          </p>
+        </div>
+        
+        <div className="space-y-3">
+          <Progress value={progress.progress} className="h-2" />
+          <p className="text-sm text-muted-foreground">
+            {progress.progress}% complete
+          </p>
+        </div>
 
-      <div className="text-xs text-muted-foreground/80">
-        Creating your unique landscape image...
-      </div>
-    </motion.div>
+        <div className="text-xs text-muted-foreground/80 pt-2">
+          Creating your unique landscape image...
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
