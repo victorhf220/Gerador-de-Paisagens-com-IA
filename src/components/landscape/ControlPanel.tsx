@@ -27,8 +27,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   isLoading
 }) => {
   const [prompt, setPrompt] = useState('');
-  const [style, setStyle] = useState<ArtStyle>('Photorealistic');
-  const [aspectRatio, setAspectRatio] = useState<AspectRatio>('16:9');
+  const [style, setStyle] = useState<ArtStyle>('photorealistic');
+  const [aspectRatio, setAspectRatio] = useState<AspectRatio>('landscape');
 
   const handleGenerate = () => {
     if (prompt.trim() && !isLoading) {
@@ -42,8 +42,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
   const handleReset = () => {
     setPrompt('');
-    setStyle('Photorealistic');
-    setAspectRatio('16:9');
+    setStyle('photorealistic');
+    setAspectRatio('landscape');
     onReset();
   };
 
@@ -52,16 +52,16 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   };
 
   const artStyles: { value: ArtStyle; label: string; description: string }[] = [
-    { value: 'Photorealistic', label: 'Photorealistic', description: 'Real-world photography style' },
-    { value: 'Artistic', label: 'Artistic', description: 'Creative and stylized' },
-    { value: 'Fantasy', label: 'Fantasy', description: 'Imaginative and magical' },
-    { value: 'Vintage', label: 'Vintage', description: 'Retro and nostalgic' }
+    { value: 'photorealistic', label: 'Photorealistic', description: 'Real-world photography style' },
+    { value: 'artistic', label: 'Artistic', description: 'Creative and stylized' },
+    { value: 'fantasy', label: 'Fantasy', description: 'Imaginative and magical' },
+    { value: 'vintage', label: 'Vintage', description: 'Retro and nostalgic' }
   ];
 
   const aspectRatios: { value: AspectRatio; label: string; description: string }[] = [
-    { value: '16:9', label: 'Landscape', description: '16:9 widescreen' },
-    { value: '1:1', label: 'Square', description: '1:1 balanced' },
-    { value: '9:16', label: 'Portrait', description: '9:16 vertical' }
+    { value: 'landscape', label: 'Landscape', description: '16:9 widescreen' },
+    { value: 'square', label: 'Square', description: '1:1 balanced' },
+    { value: 'portrait', label: 'Portrait', description: '9:16 vertical' }
   ];
 
   return (

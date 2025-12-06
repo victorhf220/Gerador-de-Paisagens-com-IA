@@ -1,6 +1,6 @@
 
-export type ArtStyle = 'Photorealistic' | 'Artistic' | 'Fantasy' | 'Vintage';
-export type AspectRatio = '16:9' | '1:1' | '9:16';
+export type ArtStyle = 'photorealistic' | 'artistic' | 'fantasy' | 'vintage';
+export type AspectRatio = 'landscape' | 'square' | 'portrait';
 
 export type GenerationOptions = {
   prompt: string;
@@ -15,7 +15,7 @@ export type GeneratedImage = {
   style: ArtStyle;
   aspectRatio: AspectRatio;
   createdAt: string; // ISO string
-  generationTime: number; // in milliseconds
+  generationTime: number; // in seconds
 };
 
 export type GenerationStage = 'idle' | 'preparing' | 'generating' | 'finalizing' | 'complete' | 'error';
@@ -30,4 +30,24 @@ export type Toast = {
   id: string;
   message: string;
   type: 'success' | 'error' | 'info' | 'warning';
+};
+
+export type QuickPrompt = {
+  id: string;
+  text: string;
+  category: string;
+  tags: string[];
+};
+
+export type FAQ = {
+  id: string;
+  question: string;
+  answer: string;
+};
+
+export type HowItWorksStep = {
+  id: number;
+  title: string;
+  description: string;
+  icon: string;
 };

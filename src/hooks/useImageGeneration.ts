@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { generateImageFlow } from '@/ai/flows/image-generation';
-import type { GeneratedImage, GenerationOptions, GenerationProgress } from '@/lib/types';
+import type { GeneratedImage, GenerationOptions, GenerationProgress, ArtStyle } from '@/lib/types';
+import { mockImages } from '@/lib/mockData';
 
 export function useImageGeneration() {
-  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
+  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>(mockImages);
   const [generationProgress, setGenerationProgress] = useState<GenerationProgress>({
     stage: 'idle',
     progress: 0,
@@ -21,7 +22,11 @@ export function useImageGeneration() {
     try {
       setTimeout(() => setGenerationProgress(s => s.stage === 'preparing' ? { stage: 'generating', progress: 40, message: 'Generating image...' } : s), 1000);
       
-      const result = await generateImageFlow(options);
+      const result = await generateImageFlow({
+        ...options,
+        style: options.style.charAt(0).toUpperCase() + options.style.slice(1) as 'Photorealistic' | 'Artistic' | 'Fantasy' | 'Vintage',
+        aspectRatio: options.aspectRatio === 'landscape' ? '16:9' : options.aspectRatio === 'portrait' ? '9:16' : '1:1',
+      });
 
       const generationTime = Date.now() - startTime;
       
@@ -38,7 +43,7 @@ export function useImageGeneration() {
         aspectRatio: options.aspectRatio,
         url: result.imageUrl,
         createdAt: new Date().toISOString(),
-        generationTime,
+        generationTime: generationTime / 1000,
       };
 
       setGeneratedImages((prev) => [newImage, ...prev]);

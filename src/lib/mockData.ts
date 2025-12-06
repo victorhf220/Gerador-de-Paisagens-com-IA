@@ -1,68 +1,162 @@
 
+import type { QuickPrompt, FAQ, HowItWorksStep, GeneratedImage } from '@/lib/types';
 
-export const quickPrompts = [
-    { id: '1', text: 'A serene mountain lake at sunset' },
-    { id: '2', text: 'Misty mountains in morning fog' },
-    { id: '3', text: 'A futuristic city with flying vehicles' },
-    { id: '4', text: 'Enchanted forest with glowing mushrooms' },
-    { id: '5', text: 'A tranquil beach at sunrise' },
-    { id: '6', text: 'A cyberpunk city alley in the rain' },
+// Quick prompt suggestions
+export const quickPrompts: QuickPrompt[] = [
+  {
+    id: '1',
+    text: 'A serene mountain lake at sunset with reflections',
+    category: 'Nature',
+    tags: ['mountain', 'lake', 'sunset']
+  },
+  {
+    id: '2', 
+    text: 'Mystical forest with glowing mushrooms and ethereal light',
+    category: 'Fantasy',
+    tags: ['forest', 'mystical', 'glowing']
+  },
+  {
+    id: '3',
+    text: 'Modern city skyline at night with neon lights',
+    category: 'Urban',
+    tags: ['city', 'night', 'neon']
+  },
+  {
+    id: '4',
+    text: 'Vintage desert scene with old western town',
+    category: 'Vintage',
+    tags: ['desert', 'western', 'vintage']
+  },
+  {
+    id: '5',
+    text: 'Snow-covered forest with morning fog',
+    category: 'Nature',
+    tags: ['snow', 'forest', 'fog']
+  },
+  {
+    id: '6',
+    text: 'Abstract flowing patterns in bright colors',
+    category: 'Abstract',
+    tags: ['abstract', 'flowing', 'colorful']
+  }
 ];
 
-export const faqData = [
+// FAQ data
+export const faqData: FAQ[] = [
   {
     id: '1',
     question: 'How does the AI landscape generator work?',
-    answer:
-      'Our AI uses advanced machine learning models trained on millions of landscape images to understand and generate new landscapes based on your text descriptions. The AI interprets your prompt and creates unique, high-quality landscape images.',
+    answer: 'Our AI uses advanced machine learning models trained on millions of landscape images to understand and generate new landscapes based on your text descriptions. The AI interprets your prompt and creates unique, high-quality landscape images.'
   },
   {
     id: '2',
-    question: 'What image formats are supported for download?',
-    answer:
-      'We generate images in a web-optimized format. You can download them as high-quality JPG files directly from the lightbox view.',
+    question: 'What image formats are supported?',
+    answer: 'We generate images in high-quality PNG and JPEG formats. All images are optimized for web use and can be easily downloaded and shared.'
   },
   {
     id: '3',
     question: 'How long does it take to generate an image?',
-    answer:
-      'Image generation typically takes 10-30 seconds depending on the complexity of your prompt and the selected style. You\'ll see real-time progress updates during the generation process.',
+    answer: 'Image generation typically takes 10-30 seconds depending on the complexity of your prompt and the selected style. You\'ll see real-time progress updates during the generation process.'
   },
   {
     id: '4',
     question: 'Can I use the generated images commercially?',
-    answer:
-      "Yes, all images generated through our platform can be used for personal and commercial purposes. We don't claim copyright on AI-generated content.",
+    answer: 'Yes, all images generated through our platform can be used for personal and commercial purposes. We don\'t claim copyright on AI-generated content.'
   },
+  {
+    id: '5',
+    question: 'What if I\'m not satisfied with the result?',
+    answer: 'You can always regenerate images with modified prompts or try different styles and aspect ratios. The AI learns from your preferences to provide better results over time.'
+  },
+  {
+    id: '6',
+    question: 'Are there any content restrictions?',
+    answer: 'We maintain community guidelines that prohibit generating inappropriate, harmful, or copyrighted content. Our AI is trained to respect these guidelines while maximizing creative freedom.'
+  }
 ];
 
-export const howItWorksSteps = [
+// How it works steps
+export const howItWorksSteps: HowItWorksStep[] = [
   {
     id: 1,
     title: 'Describe Your Vision',
-    description:
-      'Write a detailed description of the landscape you want to create. Be specific about colors, mood, and elements.',
-    icon: '✍️',
+    description: 'Write a detailed description of the landscape you want to create. Be specific about colors, mood, and elements.',
+    icon: '✍️'
   },
   {
     id: 2,
     title: 'Choose Style & Format',
-    description:
-      'Select from artistic styles like photorealistic, artistic, fantasy, or vintage. Pick your preferred aspect ratio.',
-    icon: '🎨',
+    description: 'Select from artistic styles like photorealistic, artistic, fantasy, or vintage. Pick your preferred aspect ratio.',
+    icon: '🎨'
   },
   {
     id: 3,
     title: 'AI Generation',
-    description:
-      'Our advanced AI processes your request and generates a unique landscape image based on your specifications.',
-    icon: '🤖',
+    description: 'Our advanced AI processes your request and generates a unique landscape image based on your specifications.',
+    icon: '🤖'
   },
   {
     id: 4,
     title: 'Download & Share',
-    description:
-      'View your generated landscape in high quality, download it, or share it directly from the platform.',
-    icon: '📱',
+    description: 'View your generated landscape in high quality, download it, or share it directly from the platform.',
+    icon: '📱'
+  }
+];
+
+// Mock generated images for gallery
+export const mockImages: GeneratedImage[] = [
+  {
+    id: '1',
+    url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+    prompt: 'A serene mountain lake at sunset with reflections',
+    style: 'photorealistic',
+    aspectRatio: 'landscape',
+    createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 minutes ago
+    generationTime: 15
   },
+  {
+    id: '2', 
+    url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop',
+    prompt: 'Mystical forest with glowing mushrooms and ethereal light',
+    style: 'fantasy',
+    aspectRatio: 'landscape',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
+    generationTime: 22
+  },
+  {
+    id: '3',
+    url: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=800&h=800&fit=crop',
+    prompt: 'Modern city skyline at night with neon lights',
+    style: 'artistic',
+    aspectRatio: 'square',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(), // 4 hours ago
+    generationTime: 18
+  },
+  {
+    id: '4',
+    url: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=600&h=800&fit=crop',
+    prompt: 'Vintage desert scene with old western town',
+    style: 'vintage',
+    aspectRatio: 'portrait',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(), // 6 hours ago
+    generationTime: 25
+  },
+  {
+    id: '5',
+    url: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&h=600&fit=crop',
+    prompt: 'Snow-covered forest with morning fog',
+    style: 'photorealistic',
+    aspectRatio: 'landscape',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
+    generationTime: 20
+  },
+  {
+    id: '6',
+    url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
+    prompt: 'Abstract flowing patterns in bright colors',
+    style: 'artistic',
+    aspectRatio: 'landscape',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(), // 2 days ago
+    generationTime: 12
+  }
 ];

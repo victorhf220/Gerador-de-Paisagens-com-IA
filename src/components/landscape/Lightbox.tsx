@@ -1,3 +1,4 @@
+
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { X, Download, Maximize2, Tag, Ratio, Calendar, Sparkles, Timer } from 'lucide-react';
@@ -115,7 +116,9 @@ export const Lightbox: React.FC<LightboxProps> = ({
                   </div>
                   <div className='space-y-1'>
                       <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Ratio className='w-4 h-4 text-primary' /> Aspect Ratio</h3>
-                      <Badge variant="secondary" className='ml-6'>{image.aspectRatio}</Badge>
+                      <Badge variant="secondary" className='ml-6'>
+                        {image.aspectRatio === 'landscape' ? '16:9' : image.aspectRatio === 'portrait' ? '9:16' : '1:1'}
+                      </Badge>
                   </div>
                   <div className='space-y-1'>
                       <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Calendar className='w-4 h-4 text-primary' /> Created</h3>
@@ -123,7 +126,7 @@ export const Lightbox: React.FC<LightboxProps> = ({
                   </div>
                   <div className='space-y-1'>
                       <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Timer className='w-4 h-4 text-primary' /> Generation Time</h3>
-                      <p className='pl-6'>{(image.generationTime / 1000).toFixed(2)} seconds</p>
+                      <p className='pl-6'>{image.generationTime.toFixed(2)} seconds</p>
                   </div>
                 </div>
               </div>

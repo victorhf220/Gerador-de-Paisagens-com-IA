@@ -1,3 +1,4 @@
+
 'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -14,11 +15,11 @@ interface ImageCardProps {
 const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
   const getAspectRatioClass = (aspectRatio: string) => {
     switch (aspectRatio) {
-      case '1:1':
+      case 'square':
         return 'aspect-square';
-      case '9:16':
+      case 'portrait':
         return 'aspect-[9/16]';
-      case '16:9':
+      case 'landscape':
       default:
         return 'aspect-video';
     }
@@ -64,7 +65,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
               <div className="flex items-center gap-3">
                 <span className="flex items-center gap-1">
                   <Clock size={12} />
-                  {(image.generationTime / 1000).toFixed(1)}s
+                  {image.generationTime.toFixed(1)}s
                 </span>
                 <span className="flex items-center gap-1">
                   <Palette size={12} />
@@ -77,14 +78,14 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
         </div>
 
         <div className="absolute top-3 left-3">
-          <span className="bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+          <span className="bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm capitalize">
             {image.style}
           </span>
         </div>
 
         <div className="absolute top-3 right-3">
           <span className="bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
-            {image.aspectRatio}
+            {image.aspectRatio === 'landscape' ? '16:9' : image.aspectRatio === 'portrait' ? '9:16' : '1:1'}
           </span>
         </div>
       </div>
@@ -95,10 +96,10 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
 
 type ImageGalleryProps = {
   images: GeneratedImage[];
-  onSelectImage: (image: GeneratedImage) => void;
+  onImageClick: (image: GeneratedImage) => void;
 };
 
-export function ImageGallery({ images, onSelectImage }: ImageGalleryProps) {
+export function ImageGallery({ images, onImageClick }: ImageGalleryProps) {
 
   if (images.length === 0) {
     return (
@@ -145,7 +146,7 @@ export function ImageGallery({ images, onSelectImage }: ImageGalleryProps) {
             key={image.id}
             image={image}
             index={index}
-            onClick={() => onSelectImage(image)}
+            onClick={() => onImageClick(image)}
           />
         ))}
       </motion.div>

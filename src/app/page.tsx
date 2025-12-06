@@ -1,6 +1,5 @@
 
 'use client';
-import { AnimatePresence } from 'framer-motion';
 import { AppHeader } from '@/components/landscape/AppHeader';
 import { ControlPanel } from '@/components/landscape/ControlPanel';
 import { ImageGallery } from '@/components/landscape/ImageGallery';
