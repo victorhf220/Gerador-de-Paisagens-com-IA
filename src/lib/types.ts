@@ -13,7 +13,7 @@ export type GeneratedImage = {
   prompt: string;
   style: ArtStyle;
   aspectRatio: AspectRatio;
-  createdAt: string;
+  createdAt: string; // ISO string
   generationTime: number; // in milliseconds
 };
 
