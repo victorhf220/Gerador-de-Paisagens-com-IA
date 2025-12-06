@@ -16,14 +16,14 @@ export function ImageGallery({ images, onImageClick }: ImageGalleryProps) {
 
   if (images.length === 0) {
     return (
-      <Card className="flex min-h-[70vh] w-full items-center justify-center rounded-xl border-2 border-dashed border-border/50 shadow-none bg-card/50">
+      <Card className="flex min-h-[50vh] lg:min-h-[70vh] w-full items-center justify-center rounded-xl border-2 border-dashed border-border/50 shadow-none bg-card/50">
         <div className="text-center text-muted-foreground p-8">
           <ImageUp className="mx-auto h-16 w-16 text-primary/30" />
           <h2 className="mt-6 text-xl font-headline font-semibold text-foreground">
             Suas Paisagens Geradas Aparecem Aqui
           </h2>
           <p className="mt-2 max-w-sm mx-auto">
-            Use o painel de controle à esquerda para descrever uma cena e gerar sua primeira imagem.
+            Use o painel de controle para descrever uma cena e gerar sua primeira imagem.
           </p>
         </div>
       </Card>
@@ -52,7 +52,7 @@ export function ImageGallery({ images, onImageClick }: ImageGalleryProps) {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4"
       >
         {images.map((image, index) => (
           <ImageCard

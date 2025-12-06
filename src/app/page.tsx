@@ -147,8 +147,8 @@ export default function App() {
 
       <main className="flex-1 container mx-auto p-4 sm:p-6 lg:p-8">
         <Tabs defaultValue="generator" className="w-full">
-          <div className="flex justify-center mb-8">
-            <TabsList>
+          <div className="flex justify-center mb-6 sm:mb-8">
+            <TabsList className="grid w-full grid-cols-3 sm:w-auto">
               <TabsTrigger value="generator">Gerador</TabsTrigger>
               <TabsTrigger value="how-it-works">Como Funciona</TabsTrigger>
               <TabsTrigger value="faq">FAQ</TabsTrigger>
@@ -174,7 +174,7 @@ export default function App() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ duration: 0.3 }}
-                      className="flex items-center justify-center min-h-[70vh]"
+                      className="flex items-center justify-center min-h-[50vh] lg:min-h-[70vh]"
                     >
                       <Loading progress={progress} />
                     </motion.div>

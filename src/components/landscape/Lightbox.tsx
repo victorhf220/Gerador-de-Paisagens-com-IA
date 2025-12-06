@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { ScrollArea } from '../ui/scroll-area';
 
 interface LightboxProps {
   image: GeneratedImage | null;
@@ -59,11 +60,11 @@ export const Lightbox: React.FC<LightboxProps> = ({
           <motion.div
             variants={modalVariants}
             exit="exit"
-            className="relative w-full max-w-6xl h-full max-h-[90vh] flex flex-col lg:flex-row bg-card rounded-lg shadow-2xl"
+            className="relative w-full max-w-6xl h-full max-h-[90vh] flex flex-col lg:flex-row bg-card rounded-lg shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Image Section */}
-            <div className="relative flex-grow h-1/2 lg:h-full lg:w-3/4 bg-black/50 rounded-t-lg lg:rounded-t-none lg:rounded-l-lg overflow-hidden flex items-center justify-center">
+            <div className="relative flex-grow h-1/2 lg:h-full lg:w-3/4 bg-black/50 lg:rounded-l-lg flex items-center justify-center">
               <Image
                 src={image.url}
                 alt={image.prompt}
@@ -92,58 +93,60 @@ export const Lightbox: React.FC<LightboxProps> = ({
             </div>
 
             {/* Info Panel */}
-            <div className="w-full lg:w-96 h-1/2 lg:h-full p-6 flex flex-col overflow-y-auto">
-              <div className='flex-grow space-y-6'>
-                <div className="flex items-start justify-between">
-                    <h2 className="text-2xl font-headline font-bold">Detalhes</h2>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={onClose}
-                        className="-mr-2 -mt-2"
-                        aria-label="Fechar"
-                    >
-                        <X className="w-6 h-6" />
-                    </Button>
+            <ScrollArea className="w-full lg:w-96 h-1/2 lg:h-full">
+              <div className="p-6 flex flex-col h-full">
+                <div className='flex-grow space-y-6'>
+                  <div className="flex items-start justify-between">
+                      <h2 className="text-2xl font-headline font-bold">Detalhes</h2>
+                      <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={onClose}
+                          className="-mr-2 -mt-2"
+                          aria-label="Fechar"
+                      >
+                          <X className="w-6 h-6" />
+                      </Button>
+                  </div>
+                  
+                  <div className="space-y-6 text-sm">
+                    <div className='space-y-1'>
+                        <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Sparkles className='w-4 h-4 text-primary' /> Ideia (Prompt)</h3>
+                        <p className='pl-6'>{image.prompt}</p>
+                    </div>
+                    <div className='space-y-1'>
+                        <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Cpu className='w-4 h-4 text-primary' /> Modelo IA</h3>
+                        <Badge variant="secondary" className='ml-6 capitalize'>Padrão</Badge>
+                    </div>
+                    <div className='space-y-1'>
+                        <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Tag className='w-4 h-4 text-primary' /> Estilo</h3>
+                        <Badge variant="secondary" className='ml-6 capitalize'>{image.style}</Badge>
+                    </div>
+                    <div className='space-y-1'>
+                        <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Ratio className='w-4 h-4 text-primary' /> Proporção</h3>
+                        <Badge variant="secondary" className='ml-6'>
+                          {image.aspectRatio === 'landscape' ? '16:9' : image.aspectRatio === 'portrait' ? '9:16' : '1:1'}
+                        </Badge>
+                    </div>
+                    <div className='space-y-1'>
+                        <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Calendar className='w-4 h-4 text-primary' /> Criado em</h3>
+                        <p className='pl-6'>{format(new Date(image.createdAt), "d 'de' MMMM, yyyy 'às' HH:mm", { locale: ptBR })}</p>
+                    </div>
+                    <div className='space-y-1'>
+                        <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Timer className='w-4 h-4 text-primary' /> Tempo de Geração</h3>
+                        <p className='pl-6'>{image.generationTime.toFixed(2)} segundos</p>
+                    </div>
+                  </div>
                 </div>
-                
-                <div className="space-y-6 text-sm">
-                  <div className='space-y-1'>
-                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Sparkles className='w-4 h-4 text-primary' /> Ideia (Prompt)</h3>
-                      <p className='pl-6'>{image.prompt}</p>
-                  </div>
-                  <div className='space-y-1'>
-                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Cpu className='w-4 h-4 text-primary' /> Modelo IA</h3>
-                      <Badge variant="secondary" className='ml-6 capitalize'>Padrão</Badge>
-                  </div>
-                  <div className='space-y-1'>
-                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Tag className='w-4 h-4 text-primary' /> Estilo</h3>
-                      <Badge variant="secondary" className='ml-6 capitalize'>{image.style}</Badge>
-                  </div>
-                  <div className='space-y-1'>
-                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Ratio className='w-4 h-4 text-primary' /> Proporção</h3>
-                      <Badge variant="secondary" className='ml-6'>
-                        {image.aspectRatio === 'landscape' ? '16:9' : image.aspectRatio === 'portrait' ? '9:16' : '1:1'}
-                      </Badge>
-                  </div>
-                  <div className='space-y-1'>
-                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Calendar className='w-4 h-4 text-primary' /> Criado em</h3>
-                      <p className='pl-6'>{format(new Date(image.createdAt), "d 'de' MMMM, yyyy 'às' HH:mm", { locale: ptBR })}</p>
-                  </div>
-                  <div className='space-y-1'>
-                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Timer className='w-4 h-4 text-primary' /> Tempo de Geração</h3>
-                      <p className='pl-6'>{image.generationTime.toFixed(2)} segundos</p>
-                  </div>
-                </div>
-              </div>
 
-              <div className="pt-6 border-t border-border">
-                <Button onClick={handleDownload} className='w-full'>
-                  <Download className="mr-2" />
-                  Baixar Imagem
-                </Button>
+                <div className="pt-6 mt-auto border-t border-border">
+                  <Button onClick={handleDownload} className='w-full'>
+                    <Download className="mr-2" />
+                    Baixar Imagem
+                  </Button>
+                </div>
               </div>
-            </div>
+            </ScrollArea>
           </motion.div>
         </motion.div>
       )}
