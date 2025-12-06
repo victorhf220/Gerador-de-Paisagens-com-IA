@@ -33,10 +33,9 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
   const fullPrompt = `A ${style.toLowerCase()} image of: ${prompt}, ${aspectRatioText}. ${stylePrompt}.`;
 
   const { media } = await ai.generate({
-    model: 'googleai/gemini-2.5-flash-image-preview',
+    model: 'googleai/imagen-4.0-fast-generate-001',
     prompt: fullPrompt,
     config: {
-       responseModalities: ['IMAGE'],
        safetySettings: [
         {
           category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
