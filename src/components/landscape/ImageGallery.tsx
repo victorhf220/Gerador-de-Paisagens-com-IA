@@ -1,6 +1,6 @@
 
 'use client';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, Palette, ImageUp } from 'lucide-react';
 import { GeneratedImage } from '@/lib/types';
@@ -13,6 +13,28 @@ interface ImageCardProps {
 }
 
 const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
+  const [timeAgo, setTimeAgo] = useState('');
+
+  useEffect(() => {
+    const formatTimeAgo = (date: string | Date) => {
+      const now = new Date();
+      const then = new Date(date);
+      const diffInMinutes = Math.floor((now.getTime() - then.getTime()) / (1000 * 60));
+      
+      if (diffInMinutes < 1) {
+        return 'just now';
+      } if (diffInMinutes < 60) {
+        return `${diffInMinutes}m ago`;
+      } else if (diffInMinutes < 1440) {
+        return `${Math.floor(diffInMinutes / 60)}h ago`;
+      } else {
+        return `${Math.floor(diffInMinutes / 1440)}d ago`;
+      }
+    };
+
+    setTimeAgo(formatTimeAgo(image.createdAt));
+  }, [image.createdAt]);
+
   const getAspectRatioClass = (aspectRatio: string) => {
     switch (aspectRatio) {
       case 'square':
@@ -22,20 +44,6 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
       case 'landscape':
       default:
         return 'aspect-video';
-    }
-  };
-
-  const formatTimeAgo = (date: string | Date) => {
-    const now = new Date();
-    const then = new Date(date);
-    const diffInMinutes = Math.floor((now.getTime() - then.getTime()) / (1000 * 60));
-    
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes}m ago`;
-    } else if (diffInMinutes < 1440) {
-      return `${Math.floor(diffInMinutes / 60)}h ago`;
-    } else {
-      return `${Math.floor(diffInMinutes / 1440)}d ago`;
     }
   };
 
@@ -72,7 +80,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
                   {image.style}
                 </span>
               </div>
-              <span>{formatTimeAgo(image.createdAt)}</span>
+              <span>{timeAgo}</span>
             </div>
           </div>
         </div>
