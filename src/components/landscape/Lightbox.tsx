@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { X, Download, Tag, Ratio, Calendar, Sparkles } from 'lucide-react';
+import { X, Download, Tag, Ratio, Calendar, Sparkles, Timer } from 'lucide-react';
 import { GeneratedImage } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,9 +9,10 @@ import { format } from 'date-fns';
 type LightboxProps = {
   image: GeneratedImage;
   onClose: () => void;
+  onDownload: () => void;
 };
 
-export function Lightbox({ image, onClose }: LightboxProps) {
+export function Lightbox({ image, onClose, onDownload }: LightboxProps) {
   const backdropVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
@@ -22,17 +23,6 @@ export function Lightbox({ image, onClose }: LightboxProps) {
     visible: { scale: 1, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 30 } },
     exit: { scale: 0.9, opacity: 0 },
   };
-  
-  const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = image.url;
-    // The placeholder service doesn't give us a nice filename.
-    // In a real implementation with a storage bucket, you'd have a better filename.
-    link.download = `landscape-${image.id}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
 
   return (
     <motion.div
@@ -53,9 +43,9 @@ export function Lightbox({ image, onClose }: LightboxProps) {
           <Image
             src={image.url}
             alt={image.prompt}
-            layout="fill"
-            objectFit="contain"
-            className="w-full h-full"
+            fill
+            sizes="90vw"
+            className="w-full h-full object-contain"
           />
         </div>
 
@@ -79,9 +69,13 @@ export function Lightbox({ image, onClose }: LightboxProps) {
                 <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Calendar className='w-4 h-4 text-primary' /> Created</h3>
                 <p className='pl-6'>{format(new Date(image.createdAt), "MMMM d, yyyy 'at' h:mm a")}</p>
             </div>
+            <div className='space-y-1'>
+                <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Timer className='w-4 h-4 text-primary' /> Generation Time</h3>
+                <p className='pl-6'>{(image.generationTime / 1000).toFixed(2)} seconds</p>
+            </div>
           </div>
 
-          <Button onClick={handleDownload} className='mt-6 w-full'>
+          <Button onClick={onDownload} className='mt-6 w-full'>
             <Download className="mr-2" />
             Download
           </Button>

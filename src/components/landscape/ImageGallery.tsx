@@ -1,19 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ImageUp, View } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ImageUp } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { GeneratedImage } from '@/lib/types';
 import { ImageCard } from './ImageCard';
-import { Lightbox } from './Lightbox';
 
 type ImageGalleryProps = {
   images: GeneratedImage[];
+  onSelectImage: (image: GeneratedImage) => void;
 };
 
-export function ImageGallery({ images }: ImageGalleryProps) {
-  const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
+export function ImageGallery({ images, onSelectImage }: ImageGalleryProps) {
 
   if (images.length === 0) {
     return (
@@ -56,12 +54,9 @@ export function ImageGallery({ images }: ImageGalleryProps) {
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"
       >
         {images.map((image) => (
-          <ImageCard key={image.id} image={image} onSelect={setSelectedImage} />
+          <ImageCard key={image.id} image={image} onSelect={onSelectImage} />
         ))}
       </motion.div>
-      <AnimatePresence>
-        {selectedImage && <Lightbox image={selectedImage} onClose={() => setSelectedImage(null)} />}
-      </AnimatePresence>
     </>
   );
 }

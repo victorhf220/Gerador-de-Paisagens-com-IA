@@ -14,6 +14,7 @@ export type GeneratedImage = {
   style: ArtStyle;
   aspectRatio: AspectRatio;
   createdAt: string;
+  generationTime: number; // in milliseconds
 };
 
 export type GenerationStatus = 'idle' | 'prepping' | 'generating' | 'finalizing' | 'complete' | 'error';
