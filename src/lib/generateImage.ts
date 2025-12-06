@@ -50,7 +50,7 @@ Aspect ratio: ${aspectRatioMap[aspectRatio] || "1:1"}
       : null);
 
   if (!imageUrl) {
-    throw new Error("Image generation failed: no image returned");
+    throw new Error("A geração de imagem falhou: nenhuma imagem foi retornada");
   }
 
   return { imageUrl };

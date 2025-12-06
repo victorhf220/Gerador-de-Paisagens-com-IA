@@ -1,4 +1,5 @@
 'use client';
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { AppHeader } from '@/components/landscape/AppHeader';
@@ -8,42 +9,105 @@ import { Loading } from '@/components/landscape/Loading';
 import { Lightbox } from '@/components/landscape/Lightbox';
 import { HowItWorks } from '@/components/landscape/HowItWorks';
 import { FAQ } from '@/components/landscape/FAQ';
-import { useImageGeneration, useLightbox, useToast } from '@/hooks';
-import { GenerationOptions, GeneratedImage } from '@/lib/types';
 import { Separator } from '@/components/ui/separator';
+import { GenerationOptions, GeneratedImage } from '@/lib/types';
+import { useLightbox, useToast } from '@/hooks';
 
-const App: React.FC = () => {
+export default function App() {
   const { showToast } = useToast();
-  const { 
-    isGenerating, 
-    progress, 
-    generatedImages, 
-    generateImage, 
-    resetGeneration 
-  } = useImageGeneration();
-  
-  const { 
-    selectedImage, 
-    isOpen, 
-    openLightbox, 
-    closeLightbox, 
-    downloadImage 
+  const {
+    selectedImage,
+    isOpen,
+    openLightbox,
+    closeLightbox,
   } = useLightbox();
 
+  const [isGenerating, setIsGenerating] = React.useState(false);
+  const [progress, setProgress] = React.useState<GenerationProgress | null>(null);
+  const [generatedImages, setGeneratedImages] = React.useState<GeneratedImage[]>([]);
+
+  // ✅ GERAÇÃO VIA API ROUTE (SEM SERVER ACTION)
   const handleGenerate = async (options: GenerationOptions) => {
+    setIsGenerating(true);
+    setProgress({ stage: 'preparing', progress: 10, message: 'Iniciando geração...' });
+
+    const startTime = Date.now();
     try {
-      const image = await generateImage(options);
-      if (image) {
-        showToast({
-          type: 'success',
-          message: 'Your landscape has been generated successfully!'
-        });
+      setProgress({ stage: 'generating', progress: 20, message: 'Enviando para a IA...' });
+      const res = await fetch('/api/generate-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(options),
+      });
+      
+      setProgress({ stage: 'generating', progress: 70, message: 'Aguardando a imagem...' });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Falha ao gerar a imagem');
       }
-    } catch (error: any) {
+
+      const data = await res.json();
+      
+      const endTime = Date.now();
+      const generationTime = (endTime - startTime) / 1000;
+
+      const newImage: GeneratedImage = {
+        ...data,
+        prompt: options.prompt,
+        style: options.style,
+        aspectRatio: options.aspectRatio,
+        generationTime: parseFloat(generationTime.toFixed(2)),
+        aiModel: 'standard',
+      };
+
+      setProgress({ stage: 'complete', progress: 100, message: 'Imagem gerada!' });
+      setGeneratedImages(prev => [newImage, ...prev]);
+      showToast({ type: 'success', message: 'Imagem gerada com sucesso!' });
+    } catch (err: any) {
       showToast({
         type: 'error',
-        message: error.message || 'An unexpected error occurred. Please try again.'
+        message: err.message || 'A geração falhou',
       });
+    } finally {
+      setTimeout(() => {
+        setProgress(null);
+        setIsGenerating(false);
+      }, 1000)
+    }
+  };
+
+  const handleReset = () => {
+    setGeneratedImages([]);
+    showToast({ type: 'info', message: 'Galeria resetada.' });
+  };
+
+  const downloadImage = async (image: GeneratedImage) => {
+    try {
+      if (image.url.startsWith('data:')) {
+        const link = document.createElement('a');
+        link.href = image.url;
+        link.download = `ai-landscape-${image.id}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        return true;
+      }
+      
+      const response = await fetch(image.url);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `ai-landscape-${image.id}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      return true;
+    } catch (error) {
+      console.error('Download failed:', error);
+      return false;
     }
   };
 
@@ -55,47 +119,50 @@ const App: React.FC = () => {
       if (success) {
         showToast({
           type: 'success',
-          message: 'Image downloaded successfully!'
+          message: 'Download da imagem iniciado!'
         });
       } else {
         showToast({
           type: 'error',
-          message: 'Failed to download image.'
+          message: 'Falha no download da imagem.'
         });
       }
     } catch (error) {
       showToast({
         type: 'error',
-        message: 'Download failed. Please try again.'
+        message: 'Download falhou. Por favor, tente novamente.'
       });
     }
   };
 
-  const handleReset = () => {
-    resetGeneration();
-    showToast({ type: 'info', message: 'Gallery has been reset.' });
-  }
-
   return (
     <div className="flex flex-col min-h-screen">
       <AppHeader />
-      
+
       <main className="flex-1 container mx-auto p-4 sm:p-6 lg:p-8 space-y-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
           <div className="lg:col-span-4 xl:col-span-3">
-            <ControlPanel onGenerate={handleGenerate} onReset={handleReset} isLoading={isGenerating} />
+            <ControlPanel
+              onGenerate={handleGenerate}
+              onReset={handleReset}
+              isLoading={isGenerating}
+            />
           </div>
+
           <div className="lg:col-span-8 xl:col-span-9">
             {isGenerating && progress ? (
               <div className="flex items-center justify-center min-h-[70vh]">
                 <Loading progress={progress} />
               </div>
             ) : (
-              <ImageGallery images={generatedImages} onImageClick={openLightbox} />
+              <ImageGallery
+                images={generatedImages}
+                onImageClick={openLightbox}
+              />
             )}
           </div>
         </div>
-        
+
         <Separator className="bg-border/40" />
 
         <section id="how-it-works">
@@ -115,14 +182,12 @@ const App: React.FC = () => {
         </div>
       </footer>
 
-      <Lightbox 
-        image={selectedImage} 
+      <Lightbox
+        image={selectedImage}
         isOpen={isOpen}
-        onClose={closeLightbox} 
+        onClose={closeLightbox}
         onDownload={handleDownload}
       />
     </div>
   );
-};
-
-export default App;
+}
