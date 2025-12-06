@@ -10,7 +10,7 @@ import { Lightbox } from '@/components/landscape/Lightbox';
 import { HowItWorks } from '@/components/landscape/HowItWorks';
 import { FAQ } from '@/components/landscape/FAQ';
 import { Separator } from '@/components/ui/separator';
-import { GenerationOptions, GeneratedImage } from '@/lib/types';
+import type { GenerationOptions, GeneratedImage, GenerationProgress } from '@/lib/types';
 import { useLightbox, useToast } from '@/hooks';
 
 export default function App() {
@@ -26,11 +26,11 @@ export default function App() {
   const [progress, setProgress] = React.useState<GenerationProgress | null>(null);
   const [generatedImages, setGeneratedImages] = React.useState<GeneratedImage[]>([]);
 
-  // ✅ GERAÇÃO VIA API ROUTE (SEM SERVER ACTION)
+  // ✅ GERAÇÃO VIA API ROUTE (PADRÃO CORRETO E ESTÁVEL)
   const handleGenerate = async (options: GenerationOptions) => {
     setIsGenerating(true);
     setProgress({ stage: 'preparing', progress: 10, message: 'Iniciando geração...' });
-
+    
     const startTime = Date.now();
     try {
       setProgress({ stage: 'generating', progress: 20, message: 'Enviando para a IA...' });
@@ -39,32 +39,42 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(options),
       });
-      
-      setProgress({ stage: 'generating', progress: 70, message: 'Aguardando a imagem...' });
 
+      // ✅ VALIDAÇÃO DA RESPOSTA DA API
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || 'Falha ao gerar a imagem');
+        throw new Error(errorData.error || 'Falha ao se comunicar com a API');
+      }
+      
+      setProgress({ stage: 'generating', progress: 70, message: 'Aguardando a imagem...' });
+      
+      // ✅ API RETORNA APENAS { imageUrl: "..." }
+      const { imageUrl } = await res.json();
+
+      if (!imageUrl) {
+        throw new Error('A API não retornou uma URL de imagem válida.');
       }
 
-      const data = await res.json();
-      
       const endTime = Date.now();
       const generationTime = (endTime - startTime) / 1000;
-
+      
+      // ✅ FRONTEND MONTA O OBJETO COMPLETO
       const newImage: GeneratedImage = {
-        ...data,
+        id: crypto.randomUUID(),
+        url: imageUrl,
+        createdAt: new Date().toISOString(),
         prompt: options.prompt,
         style: options.style,
         aspectRatio: options.aspectRatio,
         generationTime: parseFloat(generationTime.toFixed(2)),
-        aiModel: 'standard',
+        aiModel: 'standard', 
       };
 
       setProgress({ stage: 'complete', progress: 100, message: 'Imagem gerada!' });
       setGeneratedImages(prev => [newImage, ...prev]);
       showToast({ type: 'success', message: 'Imagem gerada com sucesso!' });
     } catch (err: any) {
+      console.error("ERRO NA GERAÇÃO:", err);
       showToast({
         type: 'error',
         message: err.message || 'A geração falhou',

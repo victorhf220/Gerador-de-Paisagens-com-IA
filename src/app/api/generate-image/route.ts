@@ -14,18 +14,20 @@ export async function POST(req: Request) {
       );
     }
     
+    // ✅ LOG ESTRATÉGICO: Início da requisição
+    console.log(`[API_GENERATE_IMAGE] Iniciando geração com prompt: "${options.prompt}"`);
+
     // Chama a função de geração de imagem real
     const result = await generateImageWithAI(options);
 
-    const imageResponse = {
-      id: crypto.randomUUID(),
-      url: result.imageUrl,
-      createdAt: new Date().toISOString(),
-    };
+    // ✅ LOG ESTRATÉGICO: Resposta da IA (URL)
+    console.log(`[API_GENERATE_IMAGE] Imagem gerada com sucesso. URL (início): ${result.imageUrl.substring(0, 100)}...`);
 
-    return NextResponse.json(imageResponse);
+    // ✅ RETORNA APENAS O CAMPO ESSENCIAL
+    return NextResponse.json({ imageUrl: result.imageUrl });
 
   } catch (error: any) {
+    // ✅ LOG ESTRATÉGICO: Erro completo
     console.error('[API_GENERATE_IMAGE_ERROR]', error);
     return NextResponse.json(
       { error: error.message || 'Falha ao gerar a imagem' },
