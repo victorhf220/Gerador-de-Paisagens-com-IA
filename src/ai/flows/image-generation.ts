@@ -27,7 +27,7 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
         numImages: 1,
         type: "TEXTTOIAMGE",
         image_size: aspectRatio === 'landscape' ? '16:9' : aspectRatio === 'portrait' ? '9:16' : '1:1',
-        callBackUrl: "https://dummy-callback.com/callback" // Placeholder
+        callBackUrl: "https://dummy-callback.com/callback" // Placeholder, as required by API
       }),
     });
 
@@ -38,8 +38,11 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
     }
 
     const result = await response.json();
-    // Assuming the API returns a task ID to check for completion
-    return { imageUrl: '', taskId: result.taskId || 'polling-simulation' }; 
+    if (result.code !== 200) {
+        throw new Error(`Generation failed: ${result.msg || 'Unknown error'}`);
+    }
+    
+    return { imageUrl: '', taskId: result.data.taskId };
   }
 
   // Fallback to standard model
@@ -92,7 +95,7 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
   }
 }
 
-const definedFlow = ai.defineFlow(
+ai.defineFlow(
   {
     name: 'generateImageFlow',
     inputSchema: ImageGenerationInputSchema,
@@ -103,21 +106,44 @@ const definedFlow = ai.defineFlow(
   }
 );
 
-// A new flow to check the status of a generation task from the new API
-export async function checkImageStatusFlow(taskId: string): Promise<{ imageUrl: string } | undefined> {
-  // This is a placeholder for where you would poll the Nano Banana API status endpoint
-  // Since we don't have a real status endpoint, we'll simulate a delay and return a mock image
-  await new Promise(resolve => setTimeout(resolve, 10000)); // Simulate 10-second generation time
-  
-  const mockImageUrl = `https://picsum.photos/seed/${taskId}/1024/768`;
-  return { imageUrl: mockImageUrl };
+
+export async function checkImageStatusFlow(taskId: string): Promise<{ imageUrl: string | null; isComplete: boolean; error?: string }> {
+  const response = await fetch(`https://api.nanobananaapi.ai/api/v1/nanobanana/record-info?taskId=${taskId}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${process.env.NANO_BANANA_API_KEY}`
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to get task status');
+  }
+
+  const result = await response.json();
+
+  switch (result.data.successFlag) {
+    case 0: // Generating
+      return { imageUrl: null, isComplete: false };
+    case 1: // Success
+      return { imageUrl: result.data.resultImageUrl, isComplete: true };
+    case 2: // Fail
+    case 3: // Fail
+      return { imageUrl: null, isComplete: true, error: result.data.failReason || 'Generation failed' };
+    default:
+      return { imageUrl: null, isComplete: false };
+  }
 }
+
 
 ai.defineFlow(
   {
     name: 'checkImageStatusFlow',
     inputSchema: z.string(),
-    outputSchema: z.object({ imageUrl: z.string() }),
+    outputSchema: z.object({ 
+      imageUrl: z.string().nullable(),
+      isComplete: z.boolean(),
+      error: z.string().optional(),
+    }),
   },
   async (taskId) => {
     return await checkImageStatusFlow(taskId);
