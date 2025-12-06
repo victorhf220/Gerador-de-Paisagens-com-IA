@@ -8,10 +8,11 @@ const ImageGenerationInputSchema = z.object({
   prompt: z.string(),
   style: z.enum(['photorealistic', 'artistic', 'fantasy', 'vintage']),
   aspectRatio: z.enum(['landscape', 'square', 'portrait']),
+  aiModel: z.enum(['standard', 'nano_banana']),
 });
 
 export async function generateImageFlow(options: GenerationOptions): Promise<{ imageUrl: string } | undefined> {
-  const { prompt, style, aspectRatio } = options;
+  const { prompt, style, aspectRatio, aiModel } = options;
 
   let stylePrompt = '';
   if (style === 'photorealistic') {
@@ -32,8 +33,12 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
 
   const fullPrompt = `A ${style.toLowerCase()} image of: ${prompt}, ${aspectRatioText}. ${stylePrompt}.`;
 
+  const model = aiModel === 'nano_banana' 
+    ? 'googleai/gemini-2.5-flash-image-preview' 
+    : 'googleai/imagen-4.0-fast-generate-001';
+
   const { media } = await ai.generate({
-    model: 'googleai/imagen-4.0-fast-generate-001',
+    model,
     prompt: fullPrompt,
     config: {
        safetySettings: [

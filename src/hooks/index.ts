@@ -44,6 +44,7 @@ export const useImageGeneration = () => {
         aspectRatio: options.aspectRatio,
         createdAt: new Date().toISOString(),
         generationTime: parseFloat(generationTime.toFixed(2)),
+        aiModel: options.aiModel,
       };
       
       setProgress({ stage: 'complete', progress: 100, message: 'Generation complete!' });

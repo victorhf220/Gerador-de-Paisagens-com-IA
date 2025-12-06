@@ -6,17 +6,21 @@ export interface GeneratedImage {
   style: ArtStyle;
   aspectRatio: AspectRatio;
   createdAt: string; // ISO string
-  generationTime: number; // in seconds
+  generationTime: number; // in seconds;
+  aiModel: AIModel;
 }
 
 export type ArtStyle = 'photorealistic' | 'artistic' | 'fantasy' | 'vintage';
 
 export type AspectRatio = 'landscape' | 'square' | 'portrait';
 
+export type AIModel = 'standard' | 'nano_banana';
+
 export interface GenerationOptions {
   prompt: string;
   style: ArtStyle;
   aspectRatio: AspectRatio;
+  aiModel: AIModel;
 }
 
 export type GenerationStage = 'idle' | 'preparing' | 'generating' | 'finalizing' | 'complete' | 'error';

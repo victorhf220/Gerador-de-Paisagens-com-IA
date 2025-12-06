@@ -1,7 +1,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { X, Download, Maximize2, Tag, Ratio, Calendar, Sparkles, Timer } from 'lucide-react';
+import { X, Download, Maximize2, Tag, Ratio, Calendar, Sparkles, Timer, Cpu } from 'lucide-react';
 import { GeneratedImage } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -43,6 +43,8 @@ export const Lightbox: React.FC<LightboxProps> = ({
     visible: { scale: 1, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 30 } },
     exit: { scale: 0.9, opacity: 0 },
   };
+
+  const modelLabel = image?.aiModel === 'nano_banana' ? 'Nano Banana' : 'Standard';
 
   return (
     <AnimatePresence>
@@ -109,6 +111,10 @@ export const Lightbox: React.FC<LightboxProps> = ({
                   <div className='space-y-1'>
                       <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Sparkles className='w-4 h-4 text-primary' /> Prompt</h3>
                       <p className='pl-6'>{image.prompt}</p>
+                  </div>
+                  <div className='space-y-1'>
+                      <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Cpu className='w-4 h-4 text-primary' /> AI Model</h3>
+                      <Badge variant="secondary" className='ml-6 capitalize'>{modelLabel}</Badge>
                   </div>
                   <div className='space-y-1'>
                       <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Tag className='w-4 h-4 text-primary' /> Style</h3>

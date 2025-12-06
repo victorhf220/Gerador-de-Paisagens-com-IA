@@ -1,7 +1,8 @@
+
 'use client';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Clock, Palette } from 'lucide-react';
+import { Clock, Palette, Cpu } from 'lucide-react';
 import { GeneratedImage } from '@/lib/types';
 
 interface ImageCardProps {
@@ -30,7 +31,15 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
       }
     };
 
+    // Set time ago on client-side only
     setTimeAgo(formatTimeAgo(image.createdAt));
+    
+    const interval = setInterval(() => {
+      setTimeAgo(formatTimeAgo(image.createdAt));
+    }, 60000);
+
+    return () => clearInterval(interval);
+
   }, [image.createdAt]);
 
   const getAspectRatioClass = (aspectRatio: string) => {
@@ -44,6 +53,8 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
         return 'aspect-video';
     }
   };
+  
+  const modelLabel = image.aiModel === 'nano_banana' ? 'Nano Banana' : 'Standard';
 
   return (
     <motion.div
@@ -76,6 +87,10 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
                 <span className="flex items-center gap-1">
                   <Palette size={12} />
                   {image.style}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Cpu size={12} />
+                   {modelLabel}
                 </span>
               </div>
               <span>{timeAgo}</span>

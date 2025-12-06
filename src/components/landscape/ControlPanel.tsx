@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, RotateCcw } from 'lucide-react';
-import type { GenerationOptions, ArtStyle, AspectRatio } from '@/lib/types';
+import type { GenerationOptions, ArtStyle, AspectRatio, AIModel } from '@/lib/types';
 import { quickPrompts } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,13 +29,15 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState<ArtStyle>('photorealistic');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('landscape');
+  const [aiModel, setAiModel] = useState<AIModel>('standard');
 
   const handleGenerate = () => {
     if (prompt.trim() && !isLoading) {
       onGenerate({
         prompt: prompt.trim(),
         style,
-        aspectRatio
+        aspectRatio,
+        aiModel,
       });
     }
   };
@@ -44,6 +46,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
     setPrompt('');
     setStyle('photorealistic');
     setAspectRatio('landscape');
+    setAiModel('standard');
     onReset();
   };
 
@@ -62,6 +65,11 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
     { value: 'landscape', label: 'Landscape', description: '16:9 widescreen' },
     { value: 'square', label: 'Square', description: '1:1 balanced' },
     { value: 'portrait', label: 'Portrait', description: '9:16 vertical' }
+  ];
+  
+  const aiModels: { value: AIModel; label: string; description: string }[] = [
+    { value: 'standard', label: 'Standard', description: 'Reliable and fast generation.' },
+    { value: 'nano_banana', label: 'Nano Banana', description: 'Experimental, high-creativity model.' },
   ];
 
   return (
@@ -103,40 +111,57 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="style">Art Style</Label>
-              <Select value={style} onValueChange={(v) => setStyle(v as ArtStyle)} disabled={isLoading}>
-                <SelectTrigger id="style">
-                  <SelectValue placeholder="Select style" />
-                </SelectTrigger>
-                <SelectContent>
-                  {artStyles.map((s) => (
-                    <SelectItem key={s.value} value={s.value}>
-                      {s.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="aspect-ratio">Aspect Ratio</Label>
-              <Select
-                value={aspectRatio}
-                onValueChange={(v) => setAspectRatio(v as AspectRatio)}
-                disabled={isLoading}
-              >
-                <SelectTrigger id="aspect-ratio">
-                  <SelectValue placeholder="Select ratio" />
-                </SelectTrigger>
-                <SelectContent>
-                  {aspectRatios.map((r) => (
-                    <SelectItem key={r.value} value={r.value}>
-                      {r.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div className="space-y-4">
+             <div className="space-y-2">
+                <Label htmlFor="ai-model">AI Model</Label>
+                <Select value={aiModel} onValueChange={(v) => setAiModel(v as AIModel)} disabled={isLoading}>
+                  <SelectTrigger id="ai-model">
+                    <SelectValue placeholder="Select model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {aiModels.map((m) => (
+                      <SelectItem key={m.value} value={m.value}>
+                        {m.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="style">Art Style</Label>
+                <Select value={style} onValueChange={(v) => setStyle(v as ArtStyle)} disabled={isLoading}>
+                  <SelectTrigger id="style">
+                    <SelectValue placeholder="Select style" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {artStyles.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>
+                        {s.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="aspect-ratio">Aspect Ratio</Label>
+                <Select
+                  value={aspectRatio}
+                  onValueChange={(v) => setAspectRatio(v as AspectRatio)}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger id="aspect-ratio">
+                    <SelectValue placeholder="Select ratio" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {aspectRatios.map((r) => (
+                      <SelectItem key={r.value} value={r.value}>
+                        {r.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </CardContent>
