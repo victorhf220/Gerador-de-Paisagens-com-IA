@@ -19,7 +19,7 @@ export async function generateImageFlow(options: GenerationOptions): Promise<{ i
     const response = await fetch('https://api.nanobananaapi.ai/api/v1/nanobanana/generate', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.GEMINI_API_KEY}`,
+        'Authorization': `Bearer ${process.env.NANO_BANANA_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
