@@ -17,7 +17,7 @@ const exampleImage: GeneratedImage = {
 export const useImageGeneration = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState<GenerationProgress | null>(null);
-  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([exampleImage]);
+  const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
 
   const generateImage = useCallback(async (options: GenerationOptions): Promise<GeneratedImage | null> => {
     setIsGenerating(true);
@@ -25,7 +25,7 @@ export const useImageGeneration = () => {
     const startTime = Date.now();
 
     try {
-      setProgress({ stage: 'preparing', progress: 20, message: 'Sending request to API...' });
+      setProgress({ stage: 'preparing', progress: 20, message: 'Sending request to AI...' });
       
       const response = await fetch('/api/generate-image', {
         method: 'POST',
@@ -35,7 +35,7 @@ export const useImageGeneration = () => {
         body: JSON.stringify(options),
       });
 
-      setProgress({ stage: 'generating', progress: 50, message: 'AI is creating...' });
+      setProgress({ stage: 'generating', progress: 50, message: 'AI is creating your masterpiece...' });
       
       const result = await response.json();
 

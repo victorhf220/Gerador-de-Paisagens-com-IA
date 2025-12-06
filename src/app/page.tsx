@@ -38,16 +38,11 @@ const App: React.FC = () => {
           type: 'success',
           message: 'Your landscape has been generated successfully!'
         });
-      } else {
-        showToast({
-          type: 'error',
-          message: 'Failed to generate landscape. Please try again.'
-        });
       }
-    } catch (error) {
+    } catch (error: any) {
       showToast({
         type: 'error',
-        message: 'An unexpected error occurred. Please try again.'
+        message: error.message || 'An unexpected error occurred. Please try again.'
       });
     }
   };
