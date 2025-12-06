@@ -1,6 +1,82 @@
 
-import { MountainSnow } from 'lucide-react';
+'use client';
+import { MountainSnow, LogIn, LogOut, Github } from 'lucide-react';
 import { motion } from 'framer-motion';
+import {
+  getAuth,
+  GithubAuthProvider,
+  signInWithPopup,
+  signOut,
+} from 'firebase/auth';
+import { app } from '@/firebase/client';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
+import { Button } from '../ui/button';
+
+const auth = getAuth(app);
+
+function UserButton() {
+  const [user, loading] = useAuthState(auth);
+
+  const handleLogin = async () => {
+    const provider = new GithubAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error('Error signing in with GitHub', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
+
+  if (loading) {
+    return <div className="w-10 h-10 rounded-full bg-muted animate-pulse" />;
+  }
+
+  if (!user) {
+    return (
+      <Button onClick={handleLogin} variant="outline">
+        <Github className="mr-2" />
+        Login com GitHub
+      </Button>
+    );
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <Avatar>
+          <AvatarImage src={user.photoURL || ''} alt={user.displayName || ''} />
+          <AvatarFallback>
+            {user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}
+          </AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>
+          <p>Logado como</p>
+          <p className="font-medium truncate">{user.displayName || user.email}</p>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleLogout} className="text-red-500">
+          <LogOut className="mr-2" />
+          Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 
 export function AppHeader() {
   return (
@@ -16,6 +92,9 @@ export function AppHeader() {
             AI Landscape Generator
           </h1>
         </motion.div>
+        <div>
+          <UserButton />
+        </div>
       </div>
     </header>
   );
