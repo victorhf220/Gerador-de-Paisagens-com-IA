@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState, useFormStatus } from "react-dom";
 import { processUrl, type FormState } from "@/app/actions";
 import { useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -31,7 +31,7 @@ function SubmitButton() {
 }
 
 export function UrlForm({ onResult }: { onResult: (data: FormState["data"]) => void }) {
-  const [state, formAction] = useFormState(processUrl, initialState);
+  const [state, formAction] = useActionState(processUrl, initialState);
   const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
 
