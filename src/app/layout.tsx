@@ -4,8 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Content Curator AI",
-  description: "AI-powered tool to summarize content, extract keywords, and more.",
+  title: "AI Landscape Generator",
+  description: "Create stunning landscapes with the power of AI.",
 };
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -23,11 +23,16 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@500;700&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className={cn("font-body antialiased min-h-screen")}>
+      <body
+        className={cn(
+          "font-body antialiased min-h-screen bg-background",
+          "selection:bg-primary/20"
+        )}
+      >
         {children}
         <Toaster />
       </body>
