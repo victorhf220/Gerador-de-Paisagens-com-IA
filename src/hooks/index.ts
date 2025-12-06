@@ -2,7 +2,6 @@
 'use client';
 import { useState, useCallback } from 'react';
 import { GenerationOptions, GeneratedImage, GenerationProgress, Toast } from '@/lib/types';
-import { generateImageFlow } from '@/ai/flows/image-generation';
 
 export const useImageGeneration = () => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -16,9 +15,22 @@ export const useImageGeneration = () => {
 
     try {
       setProgress({ stage: 'preparing', progress: 20, message: 'Sending request...' });
-      const response = await generateImageFlow(options);
       
-      if (!response || !response.imageUrl) {
+      const response = await fetch('/api/generate-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(options),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      if (!result || !result.imageUrl) {
         throw new Error('Image generation failed to return a URL.');
       }
       
@@ -30,7 +42,7 @@ export const useImageGeneration = () => {
 
       const newImage: GeneratedImage = {
         id: Date.now().toString(),
-        url: response.imageUrl,
+        url: result.imageUrl,
         prompt: options.prompt,
         style: options.style,
         aspectRatio: options.aspectRatio,
