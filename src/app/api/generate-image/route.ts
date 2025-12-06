@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import { generateImage as generateImageWithAI } from '@/lib/generateImage';
 import type { GenerationOptions, GeneratedImage } from '@/lib/types';
@@ -17,11 +18,10 @@ export async function POST(req: Request) {
     // ✅ LOG ESTRATÉGICO: Início da requisição
     console.log(`[API_GENERATE_IMAGE] Iniciando geração com prompt: "${options.prompt}"`);
 
-    // --- SIMULAÇÃO DE API ---
-    // A linha abaixo foi comentada para evitar o erro de faturamento.
-    // Em vez disso, retornamos uma imagem de placeholder para permitir o teste da UI.
-    // const result = await generateImageWithAI(options);
-
+    // --- SIMULAÇÃO DE AGENTE EXTERNO ---
+    // Em um sistema híbrido real, aqui ocorreria a chamada para um agente/serviço externo.
+    // Para manter o app funcional sem acesso direto à API da Imagen,
+    // simulamos o retorno de uma URL de imagem.
     const aspectRatioMap: Record<string, { width: number, height: number }> = {
         landscape: { width: 1024, height: 576 },
         portrait: { width: 576, height: 1024 },
@@ -36,8 +36,8 @@ export async function POST(req: Request) {
     // --- FIM DA SIMULAÇÃO ---
 
 
-    // ✅ LOG ESTRATÉGICO: Resposta da IA (URL)
-    console.log(`[API_GENERATE_IMAGE] Imagem simulada gerada com sucesso. URL: ${simulatedResult.imageUrl}`);
+    // ✅ LOG ESTRATÉGICO: Resposta simulada
+    console.log(`[API_GENERATE_IMAGE] Imagem simulada recebida com sucesso. URL: ${simulatedResult.imageUrl}`);
 
     // ✅ RETORNA APENAS O CAMPO ESSENCIAL
     return NextResponse.json({ imageUrl: simulatedResult.imageUrl });
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     // ✅ LOG ESTRATÉGICO: Erro completo
     console.error('[API_GENERATE_IMAGE_ERROR]', error);
     return NextResponse.json(
-      { error: error.message || 'Falha ao gerar a imagem' },
+      { error: error.message || 'Falha ao processar a solicitação de imagem' },
       { status: 500 }
     );
   }
