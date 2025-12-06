@@ -1,14 +1,5 @@
 
-export type ArtStyle = 'photorealistic' | 'artistic' | 'fantasy' | 'vintage';
-export type AspectRatio = 'landscape' | 'square' | 'portrait';
-
-export type GenerationOptions = {
-  prompt: string;
-  style: ArtStyle;
-  aspectRatio: AspectRatio;
-};
-
-export type GeneratedImage = {
+export interface GeneratedImage {
   id: string;
   url: string;
   prompt: string;
@@ -16,39 +7,49 @@ export type GeneratedImage = {
   aspectRatio: AspectRatio;
   createdAt: string; // ISO string
   generationTime: number; // in seconds
-};
+}
+
+export type ArtStyle = 'photorealistic' | 'artistic' | 'fantasy' | 'vintage';
+
+export type AspectRatio = 'landscape' | 'square' | 'portrait';
+
+export interface GenerationOptions {
+  prompt: string;
+  style: ArtStyle;
+  aspectRatio: AspectRatio;
+}
 
 export type GenerationStage = 'idle' | 'preparing' | 'generating' | 'finalizing' | 'complete' | 'error';
 
-export type GenerationProgress = {
+export interface GenerationProgress {
   stage: GenerationStage;
-  progress: number;
+  progress: number; // 0-100
   message: string;
-};
+}
 
-export type Toast = {
-  id: string;
-  message: string;
-  type: 'success' | 'error' | 'info' | 'warning';
-  duration?: number;
-};
-
-export type QuickPrompt = {
+export interface QuickPrompt {
   id: string;
   text: string;
   category: string;
   tags: string[];
-};
+}
 
-export type FAQ = {
+export interface FAQ {
   id: string;
   question: string;
   answer: string;
-};
+}
 
-export type HowItWorksStep = {
+export interface HowItWorksStep {
   id: number;
   title: string;
   description: string;
   icon: string;
-};
+}
+
+export interface Toast {
+  id: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  message: string;
+  duration?: number;
+}
