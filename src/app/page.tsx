@@ -1,9 +1,10 @@
+
 'use client';
 import { AnimatePresence } from 'framer-motion';
 import { AppHeader } from '@/components/landscape/AppHeader';
 import { ControlPanel } from '@/components/landscape/ControlPanel';
 import { ImageGallery } from '@/components/landscape/ImageGallery';
-import { LoadingOverlay } from '@/components/landscape/LoadingOverlay';
+import { Loading } from '@/components/landscape/Loading';
 import { useImageGeneration } from '@/hooks/useImageGeneration';
 import { useLightbox } from '@/hooks/useLightbox';
 import { Lightbox } from '@/components/landscape/Lightbox';
@@ -13,7 +14,7 @@ import { Separator } from '@/components/ui/separator';
 
 export default function Home() {
   const {
-    generationState,
+    generationProgress,
     generatedImages,
     generateImage,
     resetGallery,
@@ -24,16 +25,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <AnimatePresence>
-        {isGenerating && (
-          <LoadingOverlay
-            status={generationState.status}
-            progress={generationState.progress}
-            message={generationState.message}
-          />
-        )}
-      </AnimatePresence>
-      
       <AppHeader />
       
       <main className="flex-1 container mx-auto p-4 sm:p-6 lg:p-8 space-y-12">
@@ -42,7 +33,13 @@ export default function Home() {
             <ControlPanel onGenerate={generateImage} onReset={resetGallery} isLoading={isGenerating} />
           </div>
           <div className="lg:col-span-8 xl:col-span-9">
-            <ImageGallery images={generatedImages} onImageClick={openLightbox} />
+            {isGenerating ? (
+              <div className="flex items-center justify-center min-h-[70vh]">
+                <Loading progress={generationProgress} />
+              </div>
+            ) : (
+              <ImageGallery images={generatedImages} onImageClick={openLightbox} />
+            )}
           </div>
         </div>
         

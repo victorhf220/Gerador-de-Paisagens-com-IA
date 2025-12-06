@@ -1,3 +1,4 @@
+
 'use client';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -9,8 +10,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { WandSparkles, Loader2 } from 'lucide-react';
+import { WandSparkles } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { LoadingSpinner } from './Loading';
 
 
 interface ControlPanelProps {
@@ -145,7 +147,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             onClick={handleGenerate}
             disabled={!prompt.trim() || isLoading}
           >
-            {isLoading ? <Loader2 className="animate-spin" /> : <Sparkles />}
+            {isLoading ? <LoadingSpinner size="sm" /> : <Sparkles />}
             {isLoading ? 'Generating...' : 'Generate'}
           </Button>
           <Tooltip>
