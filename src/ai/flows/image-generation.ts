@@ -13,20 +13,22 @@ const ImageGenerationInputSchema = z.object({
 export async function generateImageFlow(options: GenerationOptions): Promise<{ imageUrl: string } | undefined> {
   const { prompt, style, aspectRatio } = options;
 
-  let fullPrompt = prompt;
+  let stylePrompt = '';
   if (style === 'Photorealistic') {
-    fullPrompt = `award-winning photograph of ${prompt}, 8k, hyperrealistic, sharp focus`;
+    stylePrompt = 'award-winning photograph, 8k, hyperrealistic, sharp focus';
   } else if (style === 'Artistic') {
-    fullPrompt = `impressionist painting of ${prompt}, vibrant colors, brushstrokes visible`;
+    stylePrompt = 'impressionist painting, vibrant colors, brushstrokes visible';
   } else if (style === 'Fantasy') {
-    fullPrompt = `epic fantasy digital art of ${prompt}, trending on artstation, cinematic lighting`;
+    stylePrompt = 'epic fantasy digital art, trending on artstation, cinematic lighting';
   } else if (style === 'Vintage') {
-    fullPrompt = `vintage photograph of ${prompt}, sepia tone, grainy, 1950s`;
+    stylePrompt = 'vintage photograph, sepia tone, grainy, 1950s';
   }
 
+  const fullPrompt = `Generate an image of: ${prompt}. The image should be in a ${style.toLowerCase()} style. ${stylePrompt}. The aspect ratio should be ${aspectRatio}.`;
+
   const { media } = await ai.generate({
-    model: 'googleai/imagen-4.0-fast-generate-001',
-    prompt: `${fullPrompt}, aspect ratio ${aspectRatio}`,
+    model: 'googleai/gemini-1.5-flash',
+    prompt: fullPrompt,
     config: {
       safetySettings: [
         {
