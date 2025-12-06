@@ -9,7 +9,6 @@ import { Loading } from '@/components/landscape/Loading';
 import { Lightbox } from '@/components/landscape/Lightbox';
 import { HowItWorks } from '@/components/landscape/HowItWorks';
 import { FAQ } from '@/components/landscape/FAQ';
-import { PullRequestList } from '@/components/landscape/PullRequestList';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { GenerationOptions, GeneratedImage, GenerationProgress } from '@/lib/types';
 import { useLightbox, useToast } from '@/hooks';
@@ -151,7 +150,6 @@ export default function App() {
           <div className="flex justify-center mb-8">
             <TabsList>
               <TabsTrigger value="generator">Gerador</TabsTrigger>
-              <TabsTrigger value="pull-requests">Pull Requests</TabsTrigger>
               <TabsTrigger value="how-it-works">Como Funciona</TabsTrigger>
               <TabsTrigger value="faq">FAQ</TabsTrigger>
             </TabsList>
@@ -196,10 +194,6 @@ export default function App() {
                 </AnimatePresence>
               </div>
             </div>
-          </TabsContent>
-
-          <TabsContent value="pull-requests">
-            <PullRequestList />
           </TabsContent>
 
           <TabsContent value="how-it-works">
