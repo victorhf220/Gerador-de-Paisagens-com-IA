@@ -1,66 +1,13 @@
 
 'use client';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { GenerationOptions, GeneratedImage, GenerationProgress, Toast } from '@/lib/types';
-import { generateImageFlow, checkImageStatusFlow } from '@/ai/flows/image-generation';
+import { generateImageFlow } from '@/ai/flows/image-generation';
 
 export const useImageGeneration = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState<GenerationProgress | null>(null);
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([]);
-
-  const pollForImage = useCallback(async (taskId: string, options: GenerationOptions) => {
-    setProgress({ stage: 'generating', progress: 50, message: 'Your image is being created by Nano Banana...' });
-    
-    let attempts = 0;
-    const maxAttempts = 30; // Poll for up to 3 minutes (30 * 6s)
-    const startTime = Date.now();
-
-    while (attempts < maxAttempts) {
-      try {
-        const status = await checkImageStatusFlow(taskId);
-
-        if (status.isComplete) {
-          if (status.imageUrl) {
-            const endTime = Date.now();
-            const generationTime = (endTime - startTime) / 1000;
-
-            const newImage: GeneratedImage = {
-              id: Date.now().toString(),
-              url: status.imageUrl,
-              prompt: options.prompt,
-              style: options.style,
-              aspectRatio: options.aspectRatio,
-              createdAt: new Date().toISOString(),
-              generationTime: parseFloat(generationTime.toFixed(2)),
-              aiModel: options.aiModel,
-            };
-            
-            setProgress({ stage: 'complete', progress: 100, message: 'Generation complete!' });
-            setGeneratedImages(prev => [newImage, ...prev]);
-            await new Promise(resolve => setTimeout(resolve, 500));
-            setIsGenerating(false);
-            setProgress(null);
-            return newImage;
-          } else {
-            throw new Error(status.error || 'Image generation failed after polling.');
-          }
-        }
-      } catch (error) {
-        console.error('Polling failed:', error);
-        // Let the loop continue to retry
-      }
-      
-      attempts++;
-      setProgress({ stage: 'generating', progress: 50 + Math.round((attempts / maxAttempts) * 40), message: 'Waiting for the AI...' });
-      await new Promise(resolve => setTimeout(resolve, 6000)); // wait 6 seconds before polling again
-    }
-    
-    setIsGenerating(false);
-    setProgress(null);
-    throw new Error('Image generation timed out.');
-
-  }, []);
 
   const generateImage = useCallback(async (options: GenerationOptions): Promise<GeneratedImage | null> => {
     setIsGenerating(true);
@@ -71,14 +18,6 @@ export const useImageGeneration = () => {
       setProgress({ stage: 'preparing', progress: 20, message: 'Sending request...' });
       const response = await generateImageFlow(options);
       
-      if (options.aiModel === 'nano_banana') {
-        if (response && response.taskId) {
-          return await pollForImage(response.taskId, options);
-        } else {
-           throw new Error('Nano Banana API did not return a task ID.');
-        }
-      }
-
       if (!response || !response.imageUrl) {
         throw new Error('Image generation failed to return a URL.');
       }
@@ -97,7 +36,7 @@ export const useImageGeneration = () => {
         aspectRatio: options.aspectRatio,
         createdAt: new Date().toISOString(),
         generationTime: parseFloat(generationTime.toFixed(2)),
-        aiModel: options.aiModel,
+        aiModel: 'standard',
       };
       
       setProgress({ stage: 'complete', progress: 100, message: 'Generation complete!' });
@@ -115,7 +54,7 @@ export const useImageGeneration = () => {
       setProgress(null);
       throw error; 
     }
-  }, [pollForImage]);
+  }, []);
 
   const resetGeneration = useCallback(() => {
     setGeneratedImages([]);

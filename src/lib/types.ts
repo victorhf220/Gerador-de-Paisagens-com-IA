@@ -20,7 +20,7 @@ export interface GenerationOptions {
   prompt: string;
   style: ArtStyle;
   aspectRatio: AspectRatio;
-  aiModel: AIModel;
+  aiModel?: AIModel;
 }
 
 export type GenerationStage = 'idle' | 'preparing' | 'generating' | 'finalizing' | 'complete' | 'error';
