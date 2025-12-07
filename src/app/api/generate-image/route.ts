@@ -1,28 +1,48 @@
-import { NextResponse } from 'next/server';
-import { runFlow } from 'genkit';
-import { imageGenerationFlow } from '@/ai/genkit';
 
+import { NextResponse } from 'next/server';
+import { ImageGenerationRequestSchema } from '@/core/schemas';
+import { startImageGeneration } from '@/core/services/image-generation.service';
+import { ZodError } from 'zod';
+
+/**
+ * API Route para iniciar a geração de uma imagem.
+ * Atua como um Controlador, responsável por validação e orquestração.
+ */
 export async function POST(req: Request) {
   try {
-    const options = await req.json();
+    const requestBody = await req.json();
 
-    if (!options.prompt || !options.style || !options.aspectRatio) {
+    // 1. VALIDAÇÃO: Usa o schema Zod para validar a entrada de forma segura.
+    const validationResult = ImageGenerationRequestSchema.safeParse(requestBody);
+
+    if (!validationResult.success) {
+      // Se a validação falhar, retorna uma resposta de erro clara.
+      console.warn('[API_VALIDATION_ERROR]', validationResult.error.flatten());
       return NextResponse.json(
-        { error: 'Parâmetros inválidos para a geração' },
+        {
+          error: 'Dados de entrada inválidos.',
+          details: validationResult.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }
 
-    console.log(`[API_GENERATE_IMAGE] Requisição recebida para prompt: "${options.prompt}".`);
+    // 2. CHAMADA DE SERVIÇO: Delega a lógica de negócio para o serviço.
+    const operation = await startImageGeneration(validationResult.data);
 
-    const { operation } = await runFlow(imageGenerationFlow, options);
-
+    // 3. RESPOSTA: Retorna o ID da operação para o cliente.
     return NextResponse.json({ jobId: operation.name });
 
-  } catch (error: any) {
-    console.error('[API_GENERATE_IMAGE_ERROR]', error);
+  } catch (error) {
+    // 4. TRATAMENTO DE ERROS: Captura erros do serviço ou da validação.
+    if (error instanceof ZodError) {
+      // Este bloco é um fallback, mas o safeParse já deve tratar a maioria dos casos.
+      return NextResponse.json({ error: 'Erro de validação', details: error.errors }, { status: 400 });
+    }
+
+    console.error('[API_ROUTE_ERROR]', error);
     return NextResponse.json(
-      { error: 'Falha ao iniciar o processo de geração de imagem' },
+      { error: 'Ocorreu uma falha inesperada no servidor ao iniciar a geração.' },
       { status: 500 }
     );
   }

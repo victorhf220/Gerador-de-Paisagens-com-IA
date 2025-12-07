@@ -1,6 +1,10 @@
-import { NextResponse } from 'next/server';
-import { getFlowState } from 'genkit';
 
+import { NextResponse } from 'next/server';
+import { getGenerationStatus } from '@/core/services/image-generation.service';
+
+/**
+ * API Route para verificar o status de uma operação de geração de imagem.
+ */
 export async function GET(
   req: Request,
   { params }: { params: { jobId: string } }
@@ -8,41 +12,23 @@ export async function GET(
   const { jobId } = params;
 
   if (!jobId) {
-    return NextResponse.json({ error: 'jobId é obrigatório' }, { status: 400 });
+    return NextResponse.json({ error: 'Job ID é obrigatório.' }, { status: 400 });
   }
 
   try {
-    const flowState = await getFlowState(jobId);
+    const statusData = await getGenerationStatus(jobId);
 
-    switch (flowState.status) {
-      case 'done':
-        return NextResponse.json({
-          status: 'done',
-          imageUrl: flowState.result,
-        });
-      case 'error':
-        console.error(`[API_STATUS_ERROR] Flow ${jobId} falhou:`, flowState.error);
-        return NextResponse.json(
-          {
-            status: 'error',
-            error: 'A geração da imagem falhou. Tente um prompt diferente ou verifique os logs.',
-            details: flowState.error,
-          },
-          { status: 500 }
-        );
-      case 'pending':
-      case 'running':
-        return NextResponse.json({
-          status: 'pending',
-        });
-      default:
-        // Caso um novo estado seja adicionado no futuro
-        return NextResponse.json({ status: 'unknown' });
+    if (!statusData) {
+      return NextResponse.json({ error: `Operação com ID ${jobId} não encontrada.` }, { status: 404 });
     }
-  } catch (error: any) {
-    console.error('[API_STATUS_CATCH_ERROR]', error);
+
+    // Retorna o status e o resultado (que pode ser a URL da imagem ou um erro)
+    return NextResponse.json(statusData);
+
+  } catch (error) {
+    console.error(`[API_STATUS_ERROR] Erro ao obter status para o Job ID: ${jobId}`, error);
     return NextResponse.json(
-      { error: 'Falha ao obter o status do processo' },
+      { error: 'Ocorreu uma falha inesperada no servidor ao verificar o status.' },
       { status: 500 }
     );
   }
