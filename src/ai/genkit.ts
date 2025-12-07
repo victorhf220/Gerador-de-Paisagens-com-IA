@@ -1,72 +1,61 @@
-
-import { configureGenkit, genkit, defineFlow, run } from 'genkit';
+import { configureGenkit, defineFlow, generate } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
-import { z } from 'zod';
-import { GenerationOptions, ArtStyle, AspectRatio } from '@/lib/types';
+import { geminiPro, imagen2 } from 'genkitx-googleai';
+import * as z from 'zod';
 
 configureGenkit({
   plugins: [
     googleAI({
-      apiKey: () => process.env.NANO_BANANA_API_KEY || ''
+      apiVersion: 'v1beta',
     }),
   ],
-  logSinks: [process.env.NODE_ENV === 'dev' ? 'stdout' : 'firebase'],
+  logLevel: 'debug',
   enableTracingAndMetrics: true,
+});
+
+const promptSchema = z.object({
+  prompt: z.string(),
+  style: z.string(),
+  aspectRatio: z.string(),
 });
 
 export const imageGenerationFlow = defineFlow(
   {
     name: 'imageGenerationFlow',
-    inputSchema: z.custom<GenerationOptions>(),
-    outputSchema: z.object({ imageUrl: z.string() }),
+    inputSchema: promptSchema,
+    outputSchema: z.string().url(),
   },
   async (options) => {
-    return await run('generate-image-logic', async () => {
-      const { prompt, style, aspectRatio } = options;
+    console.log('[GENKIT_FLOW] Iniciando imageGenerationFlow com input:', options);
 
-      const stylePromptMap: Record<string, string> = {
-        photorealistic: "award-winning photograph, 8k, hyperrealistic, sharp focus",
-        artistic: "impressionist painting, vibrant colors, brushstrokes visible",
-        fantasy: "epic fantasy digital art, cinematic lighting, artstation style",
-        vintage: "vintage photograph, sepia tone, grainy, 1950s",
-      };
-
-      const aspectRatioMap: Record<string, string> = {
-        landscape: "16:9",
-        square: "1:1",
-        portrait: "9:16",
-      };
-
-      const fullPrompt = `
-A ${style} image of ${prompt}.
-Style details: ${stylePromptMap[style] || ""}
-Aspect ratio: ${aspectRatioMap[aspectRatio] || "1:1"}
-`.trim();
-
-      const { media } = await genkit.generate({
-        model: 'googleai/imagen-4.0-fast-generate-001',
-        prompt: fullPrompt,
-        config: {
-          safetySettings: [
-            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
-            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-          ],
-        },
-      });
-
-      const imageUrl =
-        media?.url ??
-        (media?.inlineData
-          ? `data:${media.inlineData.mimeType};base64,${media.inlineData.data}`
-          : null);
-
-      if (!imageUrl) {
-        throw new Error("Image generation failed: no image was returned");
-      }
-
-      return { imageUrl };
+    const llmResponse = await generate({
+      model: geminiPro,
+      prompt: `Aprimore o seguinte prompt para gerar uma imagem mais detalhada e artística, no estilo ${options.style}: "${options.prompt}"`,
+      output: {
+        format: 'text',
+      },
     });
+
+    const enhancedPrompt = llmResponse.text();
+    console.log('[GENKIT_FLOW] Prompt aprimorado:', enhancedPrompt);
+
+    const imageResponse = await generate({
+      model: imagen2,
+      prompt: enhancedPrompt,
+      config: {
+        aspectRatio: options.aspectRatio as '1:1' | '16:9' | '9:16',
+        seed: Math.floor(Math.random() * 100000),
+      },
+    });
+
+    const generatedImage = imageResponse.candidates[0];
+
+    if (!generatedImage || !generatedImage.output) {
+      console.error('[GENKIT_FLOW_ERROR] A geração de imagem não retornou um candidato válido.');
+      throw new Error('Falha ao gerar a imagem. O resultado estava vazio.');
+    }
+
+    console.log('[GENKIT_FLOW] Imagem gerada com sucesso. Finish Reason:', generatedImage.finishReason);
+    return generatedImage.output.url;
   }
 );
