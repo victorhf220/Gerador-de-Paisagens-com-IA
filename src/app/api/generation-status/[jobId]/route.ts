@@ -1,8 +1,7 @@
 
 import { NextResponse } from 'next/server';
-import { SIMULATED_JOBS } from '@/lib/jobs';
-
-const SIMULATION_DELAY = 8000; // Simula 8 segundos de processamento de IA
+import { getFlowState } from 'genkit/flow';
+import '@/ai/genkit'; // Importa para garantir que a configuração do Genkit seja executada
 
 export async function GET(
   req: Request,
@@ -14,51 +13,41 @@ export async function GET(
     return NextResponse.json({ error: 'Job ID é obrigatório' }, { status: 400 });
   }
 
-  const job = SIMULATED_JOBS.get(jobId);
+  try {
+    console.log(`[API_STATUS] Verificando status para o job: ${jobId}`);
+    const flowState = await getFlowState(jobId);
 
-  if (!job) {
-    return NextResponse.json({ error: 'Job não encontrado' }, { status: 404 });
+    if (!flowState) {
+      console.warn(`[API_STATUS] Job não encontrado: ${jobId}`);
+      return NextResponse.json({ error: 'Job não encontrado' }, { status: 404 });
+    }
+
+    console.log(`[API_STATUS] Status do job ${jobId}: ${flowState.status}`);
+
+    switch (flowState.status) {
+      case 'pending':
+      case 'running':
+        return NextResponse.json({ status: 'pending' }, { status: 202 });
+      case 'done':
+        const result = flowState.result as { imageUrl: string };
+        if (result?.imageUrl) {
+          console.log(`[API_STATUS] Job ${jobId} concluído. URL: ${result.imageUrl}`);
+          return NextResponse.json({ status: 'complete', imageUrl: result.imageUrl });
+        }
+        console.error(`[API_STATUS] Job ${jobId} concluído, mas sem URL.`);
+        return NextResponse.json({ status: 'failed', error: 'Resultado da geração inválido' }, { status: 500 });
+      case 'error':
+        console.error(`[API_STATUS] Job ${jobId} falhou. Erro: ${flowState.error?.message}`);
+        return NextResponse.json({ status: 'failed', error: flowState.error?.message || 'Geração falhou' }, { status: 500 });
+      default:
+        console.error(`[API_STATUS] Status desconhecido para o job ${jobId}: ${flowState.status}`);
+        return NextResponse.json({ status: 'failed', error: 'Status do job desconhecido' }, { status: 500 });
+    }
+  } catch (error: any) {
+    console.error(`[API_STATUS_ERROR] Erro ao buscar o job ${jobId}:`, error);
+    if (error.message?.includes('No such operation')) {
+      return NextResponse.json({ error: 'Job não encontrado' }, { status: 404 });
+    }
+    return NextResponse.json({ status: 'failed', error: 'Erro interno ao verificar o status da geração' }, { status: 500 });
   }
-
-  // --- SIMULAÇÃO DE PROCESSAMENTO DE IA ---
-
-  // Se o trabalho já foi concluído, retorne o resultado imediatamente.
-  if (job.status === 'complete') {
-    console.log(`[API_STATUS] Job ${jobId} já completo. Retornando URL.`);
-    return NextResponse.json({ status: 'complete', imageUrl: job.imageUrl });
-  }
-
-  // Se o trabalho falhou anteriormente, retorne o erro.
-  if (job.status === 'failed') {
-    return NextResponse.json({ status: 'failed', error: 'Geração falhou' }, { status: 500 });
-  }
-  
-  // Verifique se o tempo de simulação passou.
-  const elapsedTime = Date.now() - job.startTime;
-
-  if (elapsedTime < SIMULATION_DELAY) {
-    // Se o tempo ainda não passou, retorne "pending".
-    console.log(`[API_STATUS] Job ${jobId} ainda está em andamento...`);
-    return NextResponse.json({ status: 'pending' }, { status: 202 }); // 202 Accepted indica que a requisição foi aceita mas não concluída.
-  }
-
-  // O tempo de simulação acabou. Marque o trabalho como "completo".
-  console.log(`[API_STATUS] Job ${jobId} concluído. Gerando URL simulada.`);
-
-  const aspectRatioMap: Record<string, { width: number, height: number }> = {
-    landscape: { width: 1024, height: 576 },
-    portrait: { width: 576, height: 1024 },
-    square: { width: 1024, height: 1024 }
-  };
-  const { width, height } = aspectRatioMap[job.options.aspectRatio] || aspectRatioMap.landscape;
-  const seed = `${job.options.prompt}-${job.options.aiModel}`;
-  const imageUrl = `https://picsum.photos/seed/${encodeURIComponent(seed)}/${width}/${height}`;
-
-  // Atualize o job no nosso "banco de dados" em memória.
-  job.status = 'complete';
-  job.imageUrl = imageUrl;
-  SIMULATED_JOBS.set(jobId, job);
-
-  // Retorne a resposta de sucesso.
-  return NextResponse.json({ status: 'complete', imageUrl });
 }

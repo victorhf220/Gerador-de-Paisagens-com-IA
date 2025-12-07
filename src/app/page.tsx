@@ -14,34 +14,36 @@ import type { GenerationOptions, GeneratedImage, GenerationProgress } from '@/li
 import { useLightbox, useToast } from '@/hooks';
 
 const POLLING_INTERVAL = 3000; // 3 segundos
+const POLLING_TIMEOUT = 60000; // 60 segundos
 
 export default function App() {
   const { showToast } = useToast();
-  const {
-    selectedImage,
-    isOpen,
-    openLightbox,
-    closeLightbox,
-  } = useLightbox();
-
+  const { selectedImage, isOpen, openLightbox, closeLightbox } = useLightbox();
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [progress, setProgress] = React.useState<GenerationProgress | null>(null);
   const [generatedImages, setGeneratedImages] = React.useState<GeneratedImage[]>([]);
 
-  const pollForResult = async (jobId: string, options: GenerationOptions, startTime: number): Promise<string> => {
+  const pollForResult = async (jobId: string): Promise<string> => {
     return new Promise((resolve, reject) => {
+      const startTime = Date.now();
       const intervalId = setInterval(async () => {
+        // Timeout
+        if (Date.now() - startTime > POLLING_TIMEOUT) {
+          clearInterval(intervalId);
+          reject(new Error('A geração da imagem demorou muito. Tente novamente.'));
+          return;
+        }
+
         try {
           const res = await fetch(`/api/generation-status/${jobId}`);
-          
           if (!res.ok) {
-            // Se o status for 404, ainda está processando. Outros erros rejeitam.
             if (res.status === 404) {
               console.log(`Job ${jobId} ainda em andamento...`);
-              setProgress({ stage: 'generating', progress: 50 + Math.random() * 20, message: 'Processando na nuvem...' });
-              return;
+              return; // Continua tentando
             }
-            throw new Error(`Falha ao verificar status: ${res.statusText}`);
+            // Para outros erros HTTP, tenta pegar uma mensagem da API
+            const errorData = await res.json().catch(() => null);
+            throw new Error(errorData?.error || `Falha ao verificar status: ${res.statusText}`);
           }
           
           const data = await res.json();
@@ -51,7 +53,7 @@ export default function App() {
             resolve(data.imageUrl);
           } else if (data.status === 'failed') {
             clearInterval(intervalId);
-            reject(new Error('A geração falhou no agente de IA.'));
+            reject(new Error(data.error || 'A geração falhou no agente de IA.'));
           }
           // Se for 'pending', o loop continua.
 
@@ -70,7 +72,6 @@ export default function App() {
     
     const startTime = Date.now();
     try {
-      // 1. Inicia a geração e obtém um Job ID
       setProgress({ stage: 'generating', progress: 20, message: 'Iniciando agente de IA...' });
       const initialRes = await fetch('/api/generate-image', {
         method: 'POST',
@@ -79,8 +80,8 @@ export default function App() {
       });
 
       if (!initialRes.ok) {
-        const errorData = await initialRes.json();
-        throw new Error(errorData.error || 'Falha ao iniciar a geração');
+        const errorData = await initialRes.json().catch(() => null); // Tenta parsear o erro
+        throw new Error(errorData?.error || 'Falha ao iniciar a geração. Verifique o console do servidor.');
       }
       
       const { jobId } = await initialRes.json();
@@ -89,11 +90,9 @@ export default function App() {
         throw new Error('A API não retornou um ID de trabalho válido.');
       }
 
-      // 2. Faz polling para o resultado
       setProgress({ stage: 'generating', progress: 40, message: 'Aguardando o resultado da IA...' });
-      const imageUrl = await pollForResult(jobId, options, startTime);
+      const imageUrl = await pollForResult(jobId);
       
-
       const endTime = Date.now();
       const generationTime = (endTime - startTime) / 1000;
       
@@ -124,6 +123,8 @@ export default function App() {
       }, 1000)
     }
   };
+
+  // O resto do código permanece igual
 
   const handleReset = () => {
     setGeneratedImages([]);
