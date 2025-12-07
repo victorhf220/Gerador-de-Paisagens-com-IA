@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     }
     
     // ✅ LOG ESTRATÉGICO: Início da requisição
-    console.log(`[API_GENERATE_IMAGE] Iniciando geração com prompt: "${options.prompt}"`);
+    console.log(`[API_GENERATE_IMAGE] Iniciando geração com prompt: "${options.prompt}", Modelo: ${options.aiModel || 'standard'}`);
 
     // --- SIMULAÇÃO DE AGENTE EXTERNO ---
     // Em um sistema híbrido real, aqui ocorreria a chamada para um agente/serviço externo.
@@ -29,9 +29,12 @@ export async function POST(req: Request) {
     };
     const { width, height } = aspectRatioMap[options.aspectRatio] || aspectRatioMap.landscape;
 
+    // Usar o modelo de IA na seed para diferenciar as imagens
+    const seed = `${options.prompt}-${options.aiModel}`;
+
     const simulatedResult = {
-      // Usamos o prompt para gerar uma imagem diferente a cada vez na simulação
-      imageUrl: `https://picsum.photos/seed/${encodeURIComponent(options.prompt)}/${width}/${height}`
+      // Usamos o prompt e o modelo para gerar uma imagem diferente a cada vez na simulação
+      imageUrl: `https://picsum.photos/seed/${encodeURIComponent(seed)}/${width}/${height}`
     };
     // --- FIM DA SIMULAÇÃO ---
 

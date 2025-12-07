@@ -46,6 +46,10 @@ export const Lightbox: React.FC<LightboxProps> = ({
     exit: { scale: 0.9, opacity: 0 },
   };
 
+  const getModelName = (model: string) => {
+    return model === 'nano_banana' ? 'Nano Banana' : 'Padrão';
+  }
+
   return (
     <AnimatePresence>
       {isOpen && image && (
@@ -116,7 +120,7 @@ export const Lightbox: React.FC<LightboxProps> = ({
                     </div>
                     <div className='space-y-1'>
                         <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Cpu className='w-4 h-4 text-primary' /> Modelo IA</h3>
-                        <Badge variant="secondary" className='ml-6 capitalize'>Padrão</Badge>
+                        <Badge variant="secondary" className='ml-6 capitalize'>{getModelName(image.aiModel)}</Badge>
                     </div>
                     <div className='space-y-1'>
                         <h3 className="font-semibold text-muted-foreground flex items-center gap-2"><Tag className='w-4 h-4 text-primary' /> Estilo</h3>

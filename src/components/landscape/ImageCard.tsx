@@ -54,6 +54,10 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
     }
   };
 
+  const getModelName = (model: string) => {
+    return model === 'nano_banana' ? 'Nano Banana' : 'Padrão';
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -88,7 +92,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, onClick }) => {
                 </span>
                 <span className="flex items-center gap-1">
                   <Cpu size={12} />
-                   Padrão
+                  {getModelName(image.aiModel)}
                 </span>
               </div>
               <span>{timeAgo}</span>

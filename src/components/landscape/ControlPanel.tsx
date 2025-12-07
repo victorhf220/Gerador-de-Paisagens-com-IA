@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, RotateCcw } from 'lucide-react';
-import type { GenerationOptions, ArtStyle, AspectRatio } from '@/lib/types';
+import type { GenerationOptions, ArtStyle, AspectRatio, AIModel } from '@/lib/types';
 import { quickPrompts } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { WandSparkles } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { LoadingSpinner } from './Loading';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 
 
 interface ControlPanelProps {
@@ -29,6 +30,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState<ArtStyle>('photorealistic');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('landscape');
+  const [aiModel, setAiModel] = useState<AIModel>('standard');
 
   const handleGenerate = () => {
     if (prompt.trim() && !isLoading) {
@@ -36,7 +38,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         prompt: prompt.trim(),
         style,
         aspectRatio,
-        aiModel: 'standard',
+        aiModel,
       });
     }
   };
@@ -45,6 +47,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
     setPrompt('');
     setStyle('photorealistic');
     setAspectRatio('landscape');
+    setAiModel('standard');
     onReset();
   };
 
@@ -143,6 +146,37 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               </div>
             </div>
           </div>
+          <div className="space-y-3">
+              <Label>Modelo de IA</Label>
+              <RadioGroup 
+                defaultValue="standard" 
+                value={aiModel}
+                onValueChange={(v) => setAiModel(v as AIModel)}
+                className="grid grid-cols-2 gap-4"
+                disabled={isLoading}
+              >
+                <div>
+                  <RadioGroupItem value="standard" id="standard" className="peer sr-only" />
+                  <Label
+                    htmlFor="standard"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                  >
+                    Padrão
+                    <span className='text-xs text-muted-foreground mt-1'>Qualidade ótima</span>
+                  </Label>
+                </div>
+                <div>
+                  <RadioGroupItem value="nano_banana" id="nano_banana" className="peer sr-only" />
+                  <Label
+                    htmlFor="nano_banana"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                  >
+                    Nano Banana
+                     <span className='text-xs text-muted-foreground mt-1'>Mais rápido</span>
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
           <Button
