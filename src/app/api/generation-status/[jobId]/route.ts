@@ -1,6 +1,6 @@
 
 import { NextResponse } from 'next/server';
-import { getFlowState } from 'genkit/flow';
+import { getFlowState } from 'genkit';
 import '@/ai/genkit'; // Importa para garantir que a configuração do Genkit seja executada
 
 export async function GET(

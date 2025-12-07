@@ -1,6 +1,5 @@
 
-import { configureGenkit, genkit } from 'genkit';
-import { defineFlow, run } from 'genkit/flow';
+import { configureGenkit, genkit, defineFlow, run } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
 import { z } from 'zod';
 import { GenerationOptions, ArtStyle, AspectRatio } from '@/lib/types';
