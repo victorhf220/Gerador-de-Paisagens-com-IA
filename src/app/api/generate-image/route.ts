@@ -1,8 +1,9 @@
 
 import { NextResponse } from 'next/server';
-import { ImageGenerationRequestSchema } from '@/core/schemas';
-import { startImageGeneration } from '@/core/services/image-generation.service';
+import { imageGenerationFlow } from '@/ai/genkit';
+import { runFlow } from 'genkit/flow';
 import { ZodError } from 'zod';
+import { ImageGenerationRequestSchema } from '@/core/schemas';
 
 /**
  * API Route para iniciar a geração de uma imagem.
@@ -27,8 +28,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. CHAMADA DE SERVIÇO: Delega a lógica de negócio para o serviço.
-    const operation = await startImageGeneration(validationResult.data);
+    // 2. EXECUÇÃO DO FLUXO: Inicia o fluxo Genkit diretamente.
+    const { operation } = await runFlow(imageGenerationFlow, validationResult.data);
 
     // 3. RESPOSTA: Retorna o ID da operação para o cliente.
     return NextResponse.json({ jobId: operation.name });
