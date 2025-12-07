@@ -1,4 +1,3 @@
-
 import { NextResponse } from 'next/server';
 import { runFlow } from 'genkit';
 import { imageGenerationFlow } from '@/ai/genkit';
@@ -14,7 +13,7 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log(\`[API_GENERATE_IMAGE] Requisição recebida para prompt: "${options.prompt}".\`);
+    console.log(`[API_GENERATE_IMAGE] Requisição recebida para prompt: "${options.prompt}".`);
 
     const { operation } = await runFlow(imageGenerationFlow, options);
 
