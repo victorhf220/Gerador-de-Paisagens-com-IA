@@ -52,8 +52,18 @@ export interface HowItWorksStep {
 }
 
 export interface Toast {
-  id: string;
+  id:string;
   type: 'success' | 'error' | 'warning' | 'info';
   message: string;
   duration?: number;
+}
+
+// Tipos para o fluxo de Job Assíncrono
+export type JobStatus = 'pending' | 'complete' | 'failed';
+
+export interface SimulatedJob {
+  status: JobStatus;
+  options: GenerationOptions;
+  startTime: number;
+  imageUrl?: string;
 }

@@ -13,6 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { GenerationOptions, GeneratedImage, GenerationProgress } from '@/lib/types';
 import { useLightbox, useToast } from '@/hooks';
 
+const POLLING_INTERVAL = 3000; // 3 segundos
+
 export default function App() {
   const { showToast } = useToast();
   const {
@@ -26,31 +28,71 @@ export default function App() {
   const [progress, setProgress] = React.useState<GenerationProgress | null>(null);
   const [generatedImages, setGeneratedImages] = React.useState<GeneratedImage[]>([]);
 
+  const pollForResult = async (jobId: string, options: GenerationOptions, startTime: number): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const intervalId = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/generation-status/${jobId}`);
+          
+          if (!res.ok) {
+            // Se o status for 404, ainda está processando. Outros erros rejeitam.
+            if (res.status === 404) {
+              console.log(`Job ${jobId} ainda em andamento...`);
+              setProgress({ stage: 'generating', progress: 50 + Math.random() * 20, message: 'Processando na nuvem...' });
+              return;
+            }
+            throw new Error(`Falha ao verificar status: ${res.statusText}`);
+          }
+          
+          const data = await res.json();
+
+          if (data.status === 'complete' && data.imageUrl) {
+            clearInterval(intervalId);
+            resolve(data.imageUrl);
+          } else if (data.status === 'failed') {
+            clearInterval(intervalId);
+            reject(new Error('A geração falhou no agente de IA.'));
+          }
+          // Se for 'pending', o loop continua.
+
+        } catch (error) {
+          clearInterval(intervalId);
+          reject(error);
+        }
+      }, POLLING_INTERVAL);
+    });
+  }
+
+
   const handleGenerate = async (options: GenerationOptions) => {
     setIsGenerating(true);
-    setProgress({ stage: 'preparing', progress: 10, message: 'Iniciando geração...' });
+    setProgress({ stage: 'preparing', progress: 10, message: 'Enviando requisição...' });
     
     const startTime = Date.now();
     try {
-      setProgress({ stage: 'generating', progress: 20, message: 'Enviando para a IA...' });
-      const res = await fetch('/api/generate-image', {
+      // 1. Inicia a geração e obtém um Job ID
+      setProgress({ stage: 'generating', progress: 20, message: 'Iniciando agente de IA...' });
+      const initialRes = await fetch('/api/generate-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(options),
       });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Falha ao se comunicar com a API');
+      if (!initialRes.ok) {
+        const errorData = await initialRes.json();
+        throw new Error(errorData.error || 'Falha ao iniciar a geração');
       }
       
-      setProgress({ stage: 'generating', progress: 70, message: 'Aguardando a imagem...' });
-      
-      const { imageUrl } = await res.json();
+      const { jobId } = await initialRes.json();
 
-      if (!imageUrl) {
-        throw new Error('A API não retornou uma URL de imagem válida.');
+      if(!jobId) {
+        throw new Error('A API não retornou um ID de trabalho válido.');
       }
+
+      // 2. Faz polling para o resultado
+      setProgress({ stage: 'generating', progress: 40, message: 'Aguardando o resultado da IA...' });
+      const imageUrl = await pollForResult(jobId, options, startTime);
+      
 
       const endTime = Date.now();
       const generationTime = (endTime - startTime) / 1000;
@@ -66,7 +108,7 @@ export default function App() {
         aiModel: options.aiModel || 'standard', 
       };
 
-      setProgress({ stage: 'complete', progress: 100, message: 'Imagem gerada!' });
+      setProgress({ stage: 'complete', progress: 100, message: 'Imagem recebida!' });
       setGeneratedImages(prev => [newImage, ...prev]);
       showToast({ type: 'success', message: 'Imagem gerada com sucesso!' });
     } catch (err: any) {

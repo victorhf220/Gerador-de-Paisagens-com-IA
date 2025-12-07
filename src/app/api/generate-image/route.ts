@@ -1,13 +1,13 @@
 
 import { NextResponse } from 'next/server';
-import { generateImage as generateImageWithAI } from '@/lib/generateImage';
-import type { GenerationOptions, GeneratedImage } from '@/lib/types';
+import type { GenerationOptions } from '@/lib/types';
+import { SIMULATED_JOBS } from '@/lib/jobs';
+
 
 export async function POST(req: Request) {
   try {
     const options: GenerationOptions = await req.json();
 
-    // Validação básica das opções
     if (!options.prompt || !options.style || !options.aspectRatio) {
       return NextResponse.json(
         { error: 'Parâmetros inválidos para a geração' },
@@ -15,41 +15,35 @@ export async function POST(req: Request) {
       );
     }
     
-    // ✅ LOG ESTRATÉGICO: Início da requisição
-    console.log(`[API_GENERATE_IMAGE] Iniciando geração com prompt: "${options.prompt}", Modelo: ${options.aiModel || 'standard'}`);
+    // ✅ LOG ESTRATÉGICO: Início da requisição assíncrona
+    console.log(`[API_GENERATE_IMAGE] Requisição recebida para prompt: "${options.prompt}".`);
 
-    // --- SIMULAÇÃO DE AGENTE EXTERNO ---
-    // Em um sistema híbrido real, aqui ocorreria a chamada para um agente/serviço externo.
-    // Para manter o app funcional sem acesso direto à API da Imagen,
-    // simulamos o retorno de uma URL de imagem.
-    const aspectRatioMap: Record<string, { width: number, height: number }> = {
-        landscape: { width: 1024, height: 576 },
-        portrait: { width: 576, height: 1024 },
-        square: { width: 1024, height: 1024 }
-    };
-    const { width, height } = aspectRatioMap[options.aspectRatio] || aspectRatioMap.landscape;
+    // --- SIMULAÇÃO DE ARQUITETURA ASSÍNCRONA ---
+    // 1. Gera um ID de trabalho único.
+    const jobId = `sim_${crypto.randomUUID()}`;
 
-    // Usar o modelo de IA na seed para diferenciar as imagens
-    const seed = `${options.prompt}-${options.aiModel}`;
+    // 2. Armazena os detalhes do trabalho em memória (em um cenário real, isso seria um DB ou Redis).
+    SIMULATED_JOBS.set(jobId, {
+      status: 'pending',
+      options,
+      startTime: Date.now(),
+    });
+    console.log(`[API_GENERATE_IMAGE] Job ${jobId} criado e colocado na fila.`);
 
-    const simulatedResult = {
-      // Usamos o prompt e o modelo para gerar uma imagem diferente a cada vez na simulação
-      imageUrl: `https://picsum.photos/seed/${encodeURIComponent(seed)}/${width}/${height}`
-    };
-    // --- FIM DA SIMULAÇÃO ---
-
-
-    // ✅ LOG ESTRATÉGICO: Resposta simulada
-    console.log(`[API_GENERATE_IMAGE] Imagem simulada recebida com sucesso. URL: ${simulatedResult.imageUrl}`);
-
-    // ✅ RETORNA APENAS O CAMPO ESSENCIAL
-    return NextResponse.json({ imageUrl: simulatedResult.imageUrl });
+    // 3. Limpa jobs antigos para não encher a memória.
+    if (SIMULATED_JOBS.size > 100) {
+      const oldestJobId = SIMULATED_JOBS.keys().next().value;
+      SIMULATED_JOBS.delete(oldestJobId);
+    }
+    
+    // 4. Retorna o Job ID IMEDIATAMENTE para o cliente.
+    // Isso evita o timeout da Vercel. A resposta é quase instantânea.
+    return NextResponse.json({ jobId });
 
   } catch (error: any) {
-    // ✅ LOG ESTRATÉGICO: Erro completo
     console.error('[API_GENERATE_IMAGE_ERROR]', error);
     return NextResponse.json(
-      { error: error.message || 'Falha ao processar a solicitação de imagem' },
+      { error: 'Falha ao iniciar o processo de geração de imagem' },
       { status: 500 }
     );
   }
