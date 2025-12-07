@@ -66,7 +66,7 @@ export const faqData: FAQ[] = [
   {
     id: '5',
     question: 'E se eu não estiver satisfeito com o resultado?',
-    answer: 'Você sempre pode gerar novas imagens com prompts modificados ou tentar diferentes estilos e proporções. A IA aprende com suas preferências para fornecer melhores resultados ao longo do tempo.'
+    answer: 'Você sempre pode gerar novas imagens com prompts modificados ou tentar diferentes estilos e proporções. A chave é experimentar com diferentes descrições e estilos para se aproximar da imagem que você tem em mente.'
   },
   {
     id: '6',
